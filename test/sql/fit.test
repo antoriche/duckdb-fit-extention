@@ -1,0 +1,23 @@
+# name: test/sql/fit.test
+# description: test fit extension
+# group: [sql]
+
+# Before we load the extension, this will fail
+statement error
+SELECT fit('Sam');
+----
+Catalog Error: Scalar Function with name fit does not exist!
+
+# Require statement will ensure this test is run with this extension loaded
+require fit
+
+# Confirm the extension works
+query I
+SELECT fit('Sam');
+----
+Fit Sam 🐥
+
+query I
+SELECT fit_openssl_version('Michael') ILIKE 'Fit Michael, my linked OpenSSL version is OpenSSL%';
+----
+true
