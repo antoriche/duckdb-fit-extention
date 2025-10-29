@@ -1,0 +1,5 @@
+---
+# This is third-party FIT SDK code - disable all checks
+Checks: '-*'
+InheritParentConfig: false
+WarningsAsErrors: ''
