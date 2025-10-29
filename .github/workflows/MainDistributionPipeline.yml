@@ -1,10 +1,11 @@
 #
 # This workflow calls the main distribution pipeline from DuckDB to build, test and (optionally) release the extension
+# DISABLED: Workflow triggers are commented out
 #
 name: Main Extension Distribution Pipeline
 on:
-  push:
-  pull_request:
+  # push:
+  # pull_request:
   workflow_dispatch:
 
 concurrency:
