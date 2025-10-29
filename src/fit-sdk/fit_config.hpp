@@ -19,7 +19,7 @@ extern "C" {
 	2 // Define the size of a wide character (1, 2 or 4 bytes).
 	  // Character encoding also defined by size.   1: UTF-8   2: UTF-16   4: UTF-32
 //#define FIT_CPP_INCLUDE_C // Define to include C definitions in C++ header file.  Allows C and C++ code to be compiled
-//together.
+// together.
 
 #if defined(__cplusplus)
 }
