@@ -1,0 +1,228 @@
+# name: test/sql/fit_analytics.test
+# description: analytical query tests for fit extension
+# group: [sql]
+
+require fit
+
+# Test power zone analysis
+statement ok
+SELECT 
+    CASE 
+        WHEN power = 0 THEN 'Rest'
+        WHEN power < 150 THEN 'Zone 1 (Active Recovery)'
+        WHEN power < 200 THEN 'Zone 2 (Endurance)'
+        WHEN power < 250 THEN 'Zone 3 (Tempo)'
+        WHEN power < 300 THEN 'Zone 4 (Lactate Threshold)'
+        WHEN power < 400 THEN 'Zone 5 (VO2 Max)'
+        ELSE 'Zone 6 (Anaerobic)'
+    END as power_zone,
+    COUNT(*) as duration_seconds,
+    AVG(heart_rate) as avg_heart_rate,
+    AVG(cadence) as avg_cadence
+FROM fit_records('sample.fit')
+WHERE power IS NOT NULL
+GROUP BY power_zone
+ORDER BY 
+    CASE power_zone
+        WHEN 'Rest' THEN 0
+        WHEN 'Zone 1 (Active Recovery)' THEN 1
+        WHEN 'Zone 2 (Endurance)' THEN 2
+        WHEN 'Zone 3 (Tempo)' THEN 3
+        WHEN 'Zone 4 (Lactate Threshold)' THEN 4
+        WHEN 'Zone 5 (VO2 Max)' THEN 5
+        WHEN 'Zone 6 (Anaerobic)' THEN 6
+    END;
+
+# Test heart rate zone analysis
+statement ok
+SELECT 
+    CASE 
+        WHEN heart_rate = 0 THEN 'No Data'
+        WHEN heart_rate < 110 THEN 'Zone 1 (<60% Max HR)'
+        WHEN heart_rate < 130 THEN 'Zone 2 (60-70% Max HR)'
+        WHEN heart_rate < 150 THEN 'Zone 3 (70-80% Max HR)'
+        WHEN heart_rate < 170 THEN 'Zone 4 (80-90% Max HR)'
+        ELSE 'Zone 5 (>90% Max HR)'
+    END as hr_zone,
+    COUNT(*) as duration_seconds,
+    AVG(power) as avg_power,
+    AVG(speed) as avg_speed
+FROM fit_records('sample.fit')
+WHERE heart_rate IS NOT NULL
+GROUP BY hr_zone
+ORDER BY 
+    CASE hr_zone
+        WHEN 'No Data' THEN 0
+        WHEN 'Zone 1 (<60% Max HR)' THEN 1
+        WHEN 'Zone 2 (60-70% Max HR)' THEN 2
+        WHEN 'Zone 3 (70-80% Max HR)' THEN 3
+        WHEN 'Zone 4 (80-90% Max HR)' THEN 4
+        WHEN 'Zone 5 (>90% Max HR)' THEN 5
+    END;
+
+# Test cadence analysis for cycling
+statement ok
+SELECT 
+    CASE 
+        WHEN cadence = 0 THEN 'Stopped'
+        WHEN cadence < 60 THEN 'Low Cadence (<60 RPM)'
+        WHEN cadence < 80 THEN 'Moderate Cadence (60-80 RPM)'
+        WHEN cadence < 100 THEN 'High Cadence (80-100 RPM)'
+        ELSE 'Very High Cadence (>100 RPM)'
+    END as cadence_zone,
+    COUNT(*) as duration_seconds,
+    AVG(power) as avg_power,
+    AVG(speed) as avg_speed
+FROM fit_records('sample.fit')
+WHERE cadence IS NOT NULL
+GROUP BY cadence_zone;
+
+# Test GPS-based speed vs device speed comparison
+statement ok
+SELECT 
+    COUNT(*) as total_gps_records,
+    COUNT(CASE WHEN speed IS NOT NULL AND enhanced_speed IS NOT NULL THEN 1 END) as both_speeds_available,
+    AVG(speed) as avg_device_speed,
+    AVG(enhanced_speed) as avg_enhanced_speed,
+    AVG(ABS(speed - enhanced_speed)) as avg_speed_difference
+FROM fit_records('sample.fit')
+WHERE latitude IS NOT NULL AND longitude IS NOT NULL;
+
+# Test elevation gain calculation
+statement ok
+WITH elevation_changes AS (
+    SELECT 
+        timestamp,
+        altitude,
+        LAG(altitude) OVER (ORDER BY timestamp) as prev_altitude,
+        altitude - LAG(altitude) OVER (ORDER BY timestamp) as elevation_change
+    FROM fit_records('sample.fit')
+    WHERE altitude IS NOT NULL AND timestamp IS NOT NULL
+)
+SELECT 
+    SUM(CASE WHEN elevation_change > 0 THEN elevation_change ELSE 0 END) as total_ascent,
+    SUM(CASE WHEN elevation_change < 0 THEN ABS(elevation_change) ELSE 0 END) as total_descent,
+    COUNT(*) as elevation_points,
+    MIN(altitude) as min_elevation,
+    MAX(altitude) as max_elevation
+FROM elevation_changes;
+
+# Test distance-based pace analysis
+statement ok
+WITH distance_segments AS (
+    SELECT 
+        timestamp,
+        distance,
+        speed,
+        FLOOR(distance / 1000) as km_marker
+    FROM fit_records('sample.fit')
+    WHERE distance IS NOT NULL AND speed IS NOT NULL
+)
+SELECT 
+    km_marker,
+    AVG(speed) as avg_speed_mps,
+    AVG(speed) * 3.6 as avg_speed_kph,
+    CASE WHEN AVG(speed) > 0 THEN 1000 / AVG(speed) ELSE NULL END as pace_seconds_per_km,
+    COUNT(*) as data_points
+FROM distance_segments
+GROUP BY km_marker
+HAVING COUNT(*) > 10  -- Ensure sufficient data points per km
+ORDER BY km_marker;
+
+# Test power-to-weight ratio analysis (assuming 70kg rider)
+statement ok
+SELECT 
+    AVG(power / 70.0) as avg_power_to_weight_ratio,
+    MAX(power / 70.0) as max_power_to_weight_ratio,
+    PERCENTILE_CONT(0.95) WITHIN GROUP (ORDER BY power / 70.0) as p95_power_to_weight,
+    COUNT(CASE WHEN power > 250 THEN 1 END) as seconds_above_250w,
+    COUNT(CASE WHEN power > 350 THEN 1 END) as seconds_above_350w
+FROM fit_records('sample.fit')
+WHERE power > 0;
+
+# Test training load calculation (TSS approximation)
+statement ok
+WITH power_stats AS (
+    SELECT 
+        AVG(power) as avg_power,
+        PERCENTILE_CONT(0.95) WITHIN GROUP (ORDER BY power) as ftp_estimate
+    FROM fit_records('sample.fit')
+    WHERE power > 0
+),
+normalized_power AS (
+    SELECT 
+        timestamp,
+        power,
+        (power / ps.ftp_estimate) as intensity_factor
+    FROM fit_records('sample.fit'), power_stats ps
+    WHERE power > 0
+)
+SELECT 
+    COUNT(*) / 3600.0 as duration_hours,
+    AVG(intensity_factor) as avg_intensity_factor,
+    (COUNT(*) / 3600.0) * (AVG(intensity_factor)^2) * 100 as estimated_tss
+FROM normalized_power;
+
+# Test lap-based analysis
+statement ok
+SELECT 
+    lap_id,
+    total_elapsed_time / 60.0 as duration_minutes,
+    total_distance / 1000.0 as distance_km,
+    CASE WHEN total_elapsed_time > 0 THEN total_distance / total_elapsed_time * 3.6 ELSE NULL END as avg_speed_kph,
+    avg_heart_rate,
+    max_heart_rate,
+    avg_power,
+    max_power,
+    total_calories
+FROM fit_laps('sample.fit')
+WHERE total_elapsed_time > 0
+ORDER BY lap_id;
+
+# Test session summary analytics
+statement ok
+SELECT 
+    sport,
+    sub_sport,
+    total_timer_time / 3600.0 as duration_hours,
+    total_distance / 1000.0 as distance_km,
+    CASE WHEN total_timer_time > 0 THEN total_distance / total_timer_time * 3.6 ELSE NULL END as avg_speed_kph,
+    avg_heart_rate,
+    max_heart_rate,
+    avg_power,
+    max_power,
+    normalized_power,
+    intensity_factor,
+    training_stress_score,
+    total_calories,
+    total_ascent,
+    total_descent
+FROM fit_sessions('sample.fit')
+WHERE total_timer_time > 0;
+
+# Test device usage patterns
+statement ok
+SELECT 
+    d.manufacturer,
+    d.product,
+    d.device_type,
+    COUNT(r.timestamp) as data_points,
+    MIN(r.timestamp) as first_data,
+    MAX(r.timestamp) as last_data
+FROM fit_devices('sample.fit') d
+LEFT JOIN fit_records('sample.fit') r ON d.device_index = r.device_index
+GROUP BY d.manufacturer, d.product, d.device_type, d.device_index
+ORDER BY data_points DESC;
+
+# Test temperature and environmental analysis
+statement ok
+SELECT 
+    AVG(temperature) as avg_temperature_celsius,
+    MIN(temperature) as min_temperature,
+    MAX(temperature) as max_temperature,
+    AVG(CASE WHEN temperature > 0 THEN heart_rate END) as avg_hr_warm,
+    AVG(CASE WHEN temperature <= 0 THEN heart_rate END) as avg_hr_cold,
+    COUNT(CASE WHEN temperature > 25 THEN 1 END) as hot_conditions_seconds,
+    COUNT(CASE WHEN temperature < 10 THEN 1 END) as cold_conditions_seconds
+FROM fit_records('sample.fit')
+WHERE temperature IS NOT NULL;

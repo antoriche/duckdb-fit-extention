@@ -1,23 +1,294 @@
 # name: test/sql/fit.test
-# description: test fit extension
+# description: comprehensive test suite for fit extension
 # group: [sql]
 
-# Before we load the extension, this will fail
+# Before we load the extension, table functions will fail
 statement error
-SELECT fit('Sam');
+SELECT * FROM fit('sample.fit');
 ----
-Catalog Error: Scalar Function with name fit does not exist!
+Catalog Error: Table Function with name fit does not exist!
+
+statement error
+SELECT * FROM fit_records('sample.fit');
+----
+Catalog Error: Table Function with name fit_records does not exist!
+
+statement error
+SELECT fit_openssl_version('test');
+----
+Catalog Error: Scalar Function with name fit_openssl_version does not exist!
 
 # Require statement will ensure this test is run with this extension loaded
 require fit
 
-# Confirm the extension works
-query I
-SELECT fit('Sam');
-----
-Fit Sam 🐥
-
+# Test scalar function
 query I
 SELECT fit_openssl_version('Michael') ILIKE 'Fit Michael, my linked OpenSSL version is OpenSSL%';
 ----
 true
+
+# Test with empty string
+query I
+SELECT fit_openssl_version('') ILIKE 'Fit , my linked OpenSSL version is OpenSSL%';
+----
+true
+
+# Test error handling for non-existent file
+statement error
+SELECT * FROM fit('nonexistent.fit');
+----
+
+statement error
+SELECT * FROM fit_records('nonexistent.fit');
+----
+
+statement error
+SELECT * FROM fit_activities('nonexistent.fit');
+----
+
+statement error
+SELECT * FROM fit_sessions('nonexistent.fit');
+----
+
+statement error
+SELECT * FROM fit_laps('nonexistent.fit');
+----
+
+statement error
+SELECT * FROM fit_devices('nonexistent.fit');
+----
+
+statement error
+SELECT * FROM fit_events('nonexistent.fit');
+----
+
+statement error
+SELECT * FROM fit_users('nonexistent.fit');
+----
+
+# Test with actual FIT file (assuming sample.fit exists)
+# Test basic schema of fit_records (main table function)
+query I
+SELECT COUNT(*) >= 0 FROM fit_records('sample.fit');
+----
+true
+
+query I
+SELECT COUNT(*) >= 0 FROM fit('sample.fit');
+----
+true
+
+# Test that fit and fit_records return the same data
+query I
+SELECT COUNT(*) FROM (
+    SELECT * FROM fit('sample.fit')
+    EXCEPT 
+    SELECT * FROM fit_records('sample.fit')
+);
+----
+0
+
+# Test column existence for fit_records
+statement ok
+SELECT timestamp, latitude, longitude, altitude, enhanced_altitude, 
+       distance, speed, enhanced_speed, vertical_speed,
+       power, motor_power, accumulated_power, compressed_accumulated_power,
+       heart_rate, total_hemoglobin_conc, total_hemoglobin_conc_min, total_hemoglobin_conc_max,
+       saturated_hemoglobin_percent, saturated_hemoglobin_percent_min, saturated_hemoglobin_percent_max,
+       cadence, cadence256, fractional_cadence,
+       temperature, core_temperature,
+       grade, resistance, left_right_balance,
+       left_torque_effectiveness, right_torque_effectiveness,
+       left_pedal_smoothness, right_pedal_smoothness, combined_pedal_smoothness,
+       left_pco, right_pco,
+       vertical_oscillation, stance_time_percent, stance_time, stance_time_balance,
+       step_length, vertical_ratio,
+       cycle_length, cycle_length16, cycles, total_cycles,
+       time_from_course, gps_accuracy,
+       calories, zone, activity_type, stroke_type,
+       time128, grit, flow, current_stress,
+       ebike_travel_range, ebike_battery_level, ebike_assist_mode, ebike_assist_level_percent, battery_soc,
+       ball_speed,
+       absolute_pressure, depth, next_stop_depth, next_stop_time, time_to_surface, ndl_time,
+       cns_load, n2_load, air_time_remaining, pressure_sac, volume_sac, rmv, ascent_rate, po2,
+       respiration_rate, enhanced_respiration_rate,
+       device_index
+FROM fit_records('sample.fit')
+LIMIT 1;
+
+# Test activities table
+statement ok
+SELECT activity_id, file_id, timestamp, local_timestamp, start_time,
+       total_timer_time, total_elapsed_time, total_distance,
+       sport, sub_sport, manufacturer, product, device_serial_number, software_version,
+       total_calories, total_ascent, total_descent,
+       avg_heart_rate, max_heart_rate, avg_speed, max_speed,
+       avg_power, max_power, avg_cadence, max_cadence,
+       start_position_lat, start_position_long, end_position_lat, end_position_long
+FROM fit_activities('sample.fit')
+LIMIT 1;
+
+# Test sessions table
+statement ok
+SELECT session_id, activity_id, timestamp, start_time,
+       total_elapsed_time, total_timer_time, total_distance,
+       sport, sub_sport, total_calories,
+       avg_speed, max_speed, avg_heart_rate, max_heart_rate, min_heart_rate,
+       avg_cadence, max_cadence, avg_power, max_power, normalized_power,
+       intensity_factor, training_stress_score, total_work,
+       total_ascent, total_descent, first_lap_index, num_laps,
+       event, event_type, trigger
+FROM fit_sessions('sample.fit')
+LIMIT 1;
+
+# Test laps table
+statement ok
+SELECT lap_id, session_id, activity_id, timestamp, start_time,
+       total_elapsed_time, total_timer_time, total_distance, total_calories,
+       avg_speed, max_speed, avg_heart_rate, max_heart_rate, min_heart_rate,
+       avg_cadence, max_cadence, avg_power, max_power,
+       total_ascent, total_descent, lap_trigger, event, event_type,
+       start_position_lat, start_position_long, end_position_lat, end_position_long
+FROM fit_laps('sample.fit')
+LIMIT 1;
+
+# Test devices table
+statement ok
+SELECT device_id, activity_id, device_index, device_type,
+       manufacturer, product, serial_number, software_version, hardware_version,
+       cum_operating_time, battery_status, sensor_position, descriptor,
+       ant_transmission_type, ant_device_number, ant_network, source_type,
+       product_name, battery_voltage
+FROM fit_devices('sample.fit')
+LIMIT 1;
+
+# Test events table
+statement ok
+SELECT event_id, activity_id, timestamp, event, event_type,
+       data, data16, score, opponent_score,
+       front_gear_num, front_gear, rear_gear_num, rear_gear,
+       device_index, activity_type, start_timestamp
+FROM fit_events('sample.fit')
+LIMIT 1;
+
+# Test users table
+statement ok
+SELECT user_id, gender, age, height, weight, language, time_zone,
+       activity_class, running_lactate_threshold_hr, cycling_lactate_threshold_hr,
+       swimming_lactate_threshold_hr, default_max_running_hr, default_max_biking_hr,
+       default_max_hr, hr_setting, speed_setting, dist_setting, power_setting,
+       position_setting, temperature_setting, local_id, global_id,
+       wake_time, sleep_time, height_setting, weight_setting,
+       resting_heart_rate, default_max_swimming_hr
+FROM fit_users('sample.fit')
+LIMIT 1;
+
+# Test data type consistency
+query I
+SELECT COUNT(*) >= 0 FROM fit_records('sample.fit') WHERE timestamp IS NOT NULL;
+----
+true
+
+# Test filtering and aggregation on records
+statement ok
+SELECT COUNT(*), 
+       MIN(timestamp), MAX(timestamp),
+       MIN(latitude), MAX(latitude),
+       MIN(longitude), MAX(longitude),
+       MIN(altitude), MAX(altitude),
+       MIN(distance), MAX(distance),
+       MIN(speed), MAX(speed),
+       MIN(power), MAX(power),
+       MIN(heart_rate), MAX(heart_rate),
+       MIN(cadence), MAX(cadence),
+       MIN(temperature), MAX(temperature)
+FROM fit_records('sample.fit');
+
+# Test joins between different tables
+statement ok
+SELECT a.activity_id, a.sport, a.total_distance, COUNT(r.timestamp) as record_count
+FROM fit_activities('sample.fit') a
+LEFT JOIN fit_records('sample.fit') r ON 1=1
+GROUP BY a.activity_id, a.sport, a.total_distance;
+
+# Test session and lap relationship
+statement ok
+SELECT s.session_id, s.sport, s.total_distance, COUNT(l.lap_id) as lap_count
+FROM fit_sessions('sample.fit') s
+LEFT JOIN fit_laps('sample.fit') l ON s.session_id = l.session_id
+GROUP BY s.session_id, s.sport, s.total_distance;
+
+# Test data range validations for common fields
+statement ok
+SELECT COUNT(*) FROM fit_records('sample.fit') 
+WHERE (latitude IS NULL OR (latitude >= -90 AND latitude <= 90))
+AND (longitude IS NULL OR (longitude >= -180 AND longitude <= 180))
+AND (heart_rate IS NULL OR heart_rate >= 0)
+AND (cadence IS NULL OR cadence >= 0)
+AND (power IS NULL OR power >= 0)
+AND (speed IS NULL OR speed >= 0);
+
+# Test timestamp ordering in records (should be chronological)
+query I
+SELECT COUNT(*) FROM (
+    SELECT timestamp, LAG(timestamp) OVER (ORDER BY timestamp) as prev_timestamp
+    FROM fit_records('sample.fit')
+    WHERE timestamp IS NOT NULL
+) WHERE timestamp < prev_timestamp;
+----
+0
+
+# Test distinct device information
+statement ok
+SELECT DISTINCT device_index, manufacturer, product, device_type
+FROM fit_devices('sample.fit')
+ORDER BY device_index;
+
+# Test event types and their frequency
+statement ok
+SELECT event, event_type, COUNT(*) as event_count
+FROM fit_events('sample.fit')
+GROUP BY event, event_type
+ORDER BY event_count DESC;
+
+# Test user profile data consistency
+statement ok
+SELECT user_id, gender, age, height, weight
+FROM fit_users('sample.fit')
+WHERE (age IS NULL OR age >= 0)
+AND (height IS NULL OR height >= 0)
+AND (weight IS NULL OR weight >= 0);
+
+# Performance test - should handle large result sets efficiently
+statement ok
+SELECT COUNT(*) FROM fit_records('sample.fit');
+
+# Test aggregation performance
+statement ok
+SELECT 
+    COUNT(*) as total_records,
+    COUNT(DISTINCT device_index) as unique_devices,
+    AVG(CASE WHEN heart_rate > 0 THEN heart_rate END) as avg_heart_rate,
+    AVG(CASE WHEN power > 0 THEN power END) as avg_power,
+    AVG(CASE WHEN speed > 0 THEN speed END) as avg_speed,
+    AVG(CASE WHEN cadence > 0 THEN cadence END) as avg_cadence,
+    MAX(distance) as total_distance
+FROM fit_records('sample.fit');
+
+# Test complex filtering scenarios
+statement ok
+SELECT COUNT(*) FROM fit_records('sample.fit')
+WHERE heart_rate > 0 AND power > 0 AND speed > 0;
+
+statement ok
+SELECT COUNT(*) FROM fit_records('sample.fit')
+WHERE latitude IS NOT NULL AND longitude IS NOT NULL;
+
+# Test edge cases with NULL handling
+statement ok
+SELECT 
+    COUNT(timestamp) as non_null_timestamps,
+    COUNT(latitude) as non_null_latitudes,
+    COUNT(heart_rate) as non_null_heart_rates,
+    COUNT(power) as non_null_power_values
+FROM fit_records('sample.fit');

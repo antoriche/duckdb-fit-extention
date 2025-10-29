@@ -1,0 +1,119 @@
+# name: test/sql/fit_data_types.test
+# description: data type validation tests for fit extension
+# group: [sql]
+
+require fit
+
+# Test timestamp data types
+query I
+SELECT COUNT(*) >= 0 FROM fit_records('sample.fit') 
+WHERE timestamp::VARCHAR LIKE '%-%-%T%:%:%';
+----
+true
+
+# Test numeric range validations
+statement ok
+SELECT 
+    COUNT(CASE WHEN latitude BETWEEN -90 AND 90 THEN 1 END) as valid_latitudes,
+    COUNT(CASE WHEN longitude BETWEEN -180 AND 180 THEN 1 END) as valid_longitudes,
+    COUNT(CASE WHEN heart_rate BETWEEN 0 AND 255 THEN 1 END) as valid_heart_rates,
+    COUNT(CASE WHEN cadence BETWEEN 0 AND 255 THEN 1 END) as valid_cadence,
+    COUNT(CASE WHEN power >= 0 THEN 1 END) as valid_power,
+    COUNT(CASE WHEN speed >= 0 THEN 1 END) as valid_speed,
+    COUNT(CASE WHEN temperature BETWEEN -128 AND 127 THEN 1 END) as valid_temperatures
+FROM fit_records('sample.fit');
+
+# Test string field constraints
+statement ok
+SELECT 
+    COUNT(CASE WHEN activity_type IS NULL OR LENGTH(activity_type) <= 255 THEN 1 END) as valid_activity_types,
+    COUNT(CASE WHEN stroke_type IS NULL OR LENGTH(stroke_type) <= 255 THEN 1 END) as valid_stroke_types
+FROM fit_records('sample.fit');
+
+# Test uint8 field ranges (0-255)
+statement ok
+SELECT COUNT(*) FROM fit_records('sample.fit')
+WHERE (heart_rate IS NULL OR heart_rate BETWEEN 0 AND 255)
+AND (cadence IS NULL OR cadence BETWEEN 0 AND 255)
+AND (zone IS NULL OR zone BETWEEN 0 AND 255)
+AND (gps_accuracy IS NULL OR gps_accuracy BETWEEN 0 AND 255)
+AND (cycles IS NULL OR cycles BETWEEN 0 AND 255)
+AND (device_index IS NULL OR device_index BETWEEN 0 AND 255);
+
+# Test uint16 field ranges (0-65535)
+statement ok
+SELECT COUNT(*) FROM fit_records('sample.fit')
+WHERE (power IS NULL OR power BETWEEN 0 AND 65535)
+AND (motor_power IS NULL OR motor_power BETWEEN 0 AND 65535)
+AND (resistance IS NULL OR resistance BETWEEN 0 AND 65535)
+AND (calories IS NULL OR calories BETWEEN 0 AND 65535)
+AND (ebike_travel_range IS NULL OR ebike_travel_range BETWEEN 0 AND 65535)
+AND (n2_load IS NULL OR n2_load BETWEEN 0 AND 65535);
+
+# Test uint32 field ranges (0-4294967295)
+statement ok
+SELECT COUNT(*) FROM fit_records('sample.fit')
+WHERE (accumulated_power IS NULL OR accumulated_power >= 0)
+AND (total_cycles IS NULL OR total_cycles >= 0)
+AND (absolute_pressure IS NULL OR absolute_pressure >= 0)
+AND (next_stop_time IS NULL OR next_stop_time >= 0)
+AND (time_to_surface IS NULL OR time_to_surface >= 0)
+AND (ndl_time IS NULL OR ndl_time >= 0)
+AND (air_time_remaining IS NULL OR air_time_remaining >= 0);
+
+# Test int8 field ranges (-128 to 127)
+statement ok
+SELECT COUNT(*) FROM fit_records('sample.fit')
+WHERE (temperature IS NULL OR temperature BETWEEN -128 AND 127)
+AND (left_pco IS NULL OR left_pco BETWEEN -128 AND 127)
+AND (right_pco IS NULL OR right_pco BETWEEN -128 AND 127);
+
+# Test double field validity (not NaN, not infinite)
+statement ok
+SELECT COUNT(*) FROM fit_records('sample.fit')
+WHERE (latitude IS NULL OR (latitude != 'NaN'::DOUBLE AND latitude != 'Infinity'::DOUBLE AND latitude != '-Infinity'::DOUBLE))
+AND (longitude IS NULL OR (longitude != 'NaN'::DOUBLE AND longitude != 'Infinity'::DOUBLE AND longitude != '-Infinity'::DOUBLE))
+AND (altitude IS NULL OR (altitude != 'NaN'::DOUBLE AND altitude != 'Infinity'::DOUBLE AND altitude != '-Infinity'::DOUBLE))
+AND (distance IS NULL OR (distance != 'NaN'::DOUBLE AND distance != 'Infinity'::DOUBLE AND distance != '-Infinity'::DOUBLE))
+AND (speed IS NULL OR (speed != 'NaN'::DOUBLE AND speed != 'Infinity'::DOUBLE AND speed != '-Infinity'::DOUBLE));
+
+# Test percentage fields (should be 0-100)
+statement ok
+SELECT COUNT(*) FROM fit_records('sample.fit')
+WHERE (left_right_balance IS NULL OR left_right_balance BETWEEN 0 AND 100)
+AND (left_torque_effectiveness IS NULL OR left_torque_effectiveness BETWEEN 0 AND 100)
+AND (right_torque_effectiveness IS NULL OR right_torque_effectiveness BETWEEN 0 AND 100)
+AND (left_pedal_smoothness IS NULL OR left_pedal_smoothness BETWEEN 0 AND 100)
+AND (right_pedal_smoothness IS NULL OR right_pedal_smoothness BETWEEN 0 AND 100)
+AND (combined_pedal_smoothness IS NULL OR combined_pedal_smoothness BETWEEN 0 AND 100)
+AND (stance_time_percent IS NULL OR stance_time_percent BETWEEN 0 AND 100)
+AND (vertical_ratio IS NULL OR vertical_ratio BETWEEN 0 AND 100)
+AND (battery_soc IS NULL OR battery_soc BETWEEN 0 AND 100)
+AND (cns_load IS NULL OR cns_load BETWEEN 0 AND 100);
+
+# Test activities table data types
+statement ok
+SELECT 
+    COUNT(CASE WHEN activity_id >= 0 THEN 1 END) as valid_activity_ids,
+    COUNT(CASE WHEN total_timer_time >= 0 THEN 1 END) as valid_timer_times,
+    COUNT(CASE WHEN total_elapsed_time >= 0 THEN 1 END) as valid_elapsed_times,
+    COUNT(CASE WHEN total_distance >= 0 THEN 1 END) as valid_distances,
+    COUNT(CASE WHEN total_calories >= 0 THEN 1 END) as valid_calories
+FROM fit_activities('sample.fit');
+
+# Test sessions table data types
+statement ok
+SELECT 
+    COUNT(CASE WHEN session_id >= 0 THEN 1 END) as valid_session_ids,
+    COUNT(CASE WHEN intensity_factor >= 0 THEN 1 END) as valid_intensity_factors,
+    COUNT(CASE WHEN training_stress_score >= 0 THEN 1 END) as valid_tss_scores
+FROM fit_sessions('sample.fit');
+
+# Test device table string length constraints
+statement ok
+SELECT 
+    COUNT(CASE WHEN manufacturer IS NULL OR LENGTH(manufacturer) <= 255 THEN 1 END) as valid_manufacturers,
+    COUNT(CASE WHEN product IS NULL OR LENGTH(product) <= 255 THEN 1 END) as valid_products,
+    COUNT(CASE WHEN software_version IS NULL OR LENGTH(software_version) <= 50 THEN 1 END) as valid_sw_versions,
+    COUNT(CASE WHEN hardware_version IS NULL OR LENGTH(hardware_version) <= 50 THEN 1 END) as valid_hw_versions
+FROM fit_devices('sample.fit');

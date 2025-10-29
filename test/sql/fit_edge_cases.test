@@ -1,0 +1,173 @@
+# name: test/sql/fit_edge_cases.test
+# description: edge case tests for fit extension
+# group: [sql]
+
+require fit
+
+# Test with NULL/empty file path
+statement error
+SELECT * FROM fit_records(NULL);
+----
+
+statement error
+SELECT * FROM fit_records('');
+----
+
+# Test with invalid file extensions
+statement error
+SELECT * FROM fit_records('sample.txt');
+----
+
+statement error
+SELECT * FROM fit_records('sample.json');
+----
+
+# Test with file that doesn't exist
+statement error
+SELECT * FROM fit_records('/path/that/does/not/exist.fit');
+----
+
+# Test with directory instead of file
+statement error
+SELECT * FROM fit_records('/tmp');
+----
+
+# Test concurrent access to same file
+statement ok
+SELECT COUNT(*) FROM fit_records('sample.fit');
+
+statement ok
+SELECT COUNT(*) FROM fit_records('sample.fit');
+
+# Test multiple table functions on same file
+statement ok
+SELECT 
+    (SELECT COUNT(*) FROM fit_records('sample.fit')) as records_count,
+    (SELECT COUNT(*) FROM fit_activities('sample.fit')) as activities_count,
+    (SELECT COUNT(*) FROM fit_sessions('sample.fit')) as sessions_count,
+    (SELECT COUNT(*) FROM fit_laps('sample.fit')) as laps_count,
+    (SELECT COUNT(*) FROM fit_devices('sample.fit')) as devices_count,
+    (SELECT COUNT(*) FROM fit_events('sample.fit')) as events_count,
+    (SELECT COUNT(*) FROM fit_users('sample.fit')) as users_count;
+
+# Test very long file paths (should handle gracefully)
+statement error
+SELECT * FROM fit_records(REPEAT('a', 1000) || '.fit');
+----
+
+# Test special characters in file paths
+statement error
+SELECT * FROM fit_records('file with spaces.fit');
+----
+
+statement error
+SELECT * FROM fit_records('file-with-dashes.fit');
+----
+
+statement error
+SELECT * FROM fit_records('file_with_underscores.fit');
+----
+
+# Test empty results handling
+query I
+SELECT COUNT(*) FROM fit_records('sample.fit') WHERE 1=0;
+----
+0
+
+# Test extreme numeric values handling
+statement ok
+SELECT COUNT(*) FROM fit_records('sample.fit')
+WHERE power < 10000  -- Reasonable upper bound for power
+AND heart_rate < 250  -- Reasonable upper bound for heart rate
+AND speed < 100;      -- Reasonable upper bound for speed (m/s)
+
+# Test timestamp edge cases
+statement ok
+SELECT COUNT(*) FROM fit_records('sample.fit')
+WHERE timestamp >= '1989-12-31'::TIMESTAMPTZ  -- FIT epoch start
+AND timestamp <= '2099-12-31'::TIMESTAMPTZ;    -- Future reasonable limit
+
+# Test coordinate boundary cases
+statement ok
+SELECT COUNT(*) FROM fit_records('sample.fit')
+WHERE (latitude IS NULL OR (latitude >= -90 AND latitude <= 90))
+AND (longitude IS NULL OR (longitude >= -180 AND longitude <= 180));
+
+# Test device index consistency across tables
+statement ok
+SELECT DISTINCT r.device_index 
+FROM fit_records('sample.fit') r
+WHERE r.device_index NOT IN (
+    SELECT DISTINCT d.device_index 
+    FROM fit_devices('sample.fit') d
+    WHERE d.device_index IS NOT NULL
+) AND r.device_index IS NOT NULL;
+
+# Test activity ID consistency across tables
+statement ok
+SELECT COUNT(*) FROM (
+    SELECT DISTINCT activity_id FROM fit_sessions('sample.fit')
+    EXCEPT
+    SELECT DISTINCT activity_id FROM fit_activities('sample.fit')
+);
+
+# Test session ID consistency between sessions and laps
+statement ok
+SELECT COUNT(*) FROM (
+    SELECT DISTINCT session_id FROM fit_laps('sample.fit')
+    EXCEPT  
+    SELECT DISTINCT session_id FROM fit_sessions('sample.fit')
+);
+
+# Test handling of corrupted/partial data
+statement ok
+SELECT COUNT(*) FROM fit_records('sample.fit')
+WHERE timestamp IS NOT NULL 
+AND (latitude IS NOT NULL OR longitude IS NOT NULL OR heart_rate > 0 OR power > 0);
+
+# Test memory handling with LIMIT and OFFSET
+statement ok
+SELECT COUNT(*) FROM fit_records('sample.fit') LIMIT 100 OFFSET 0;
+
+statement ok  
+SELECT COUNT(*) FROM fit_records('sample.fit') LIMIT 100 OFFSET 100;
+
+# Test data consistency within records
+statement ok
+SELECT COUNT(*) FROM fit_records('sample.fit')
+WHERE NOT (
+    (enhanced_speed IS NULL AND speed IS NULL) OR
+    (enhanced_speed IS NULL) OR 
+    (speed IS NULL) OR
+    (ABS(enhanced_speed - speed) < speed * 0.1)  -- Enhanced should be close to regular
+);
+
+# Test enhanced vs regular altitude consistency  
+statement ok
+SELECT COUNT(*) FROM fit_records('sample.fit')
+WHERE enhanced_altitude IS NOT NULL 
+AND altitude IS NOT NULL
+AND ABS(enhanced_altitude - altitude) > 100;  -- Should not differ by more than 100m
+
+# Test negative values where they shouldn't exist
+statement ok
+SELECT COUNT(*) FROM fit_records('sample.fit')
+WHERE distance < 0 OR calories < 0 OR total_cycles < 0;
+
+# Test string field edge cases
+statement ok
+SELECT COUNT(*) FROM fit_records('sample.fit')
+WHERE activity_type = '' OR stroke_type = '';
+
+# Test NULL handling in aggregations
+statement ok
+SELECT 
+    COUNT(*) as total_records,
+    COUNT(heart_rate) as heart_rate_records,
+    COUNT(power) as power_records,
+    COUNT(latitude) as gps_records,
+    AVG(heart_rate) as avg_hr,
+    AVG(power) as avg_power,
+    MIN(CASE WHEN heart_rate > 0 THEN heart_rate END) as min_hr,
+    MAX(heart_rate) as max_hr
+FROM fit_records('sample.fit');

@@ -1,0 +1,76 @@
+# name: test/sql/fit_activities_empty_fields_investigation.test
+# description: Investigate why certain fields in fit_activities are empty and document expected behavior
+# group: [sql]
+
+require fit
+
+# Test the specific fields mentioned in the issue
+statement ok
+CREATE TEMP TABLE test_activities AS SELECT * FROM fit_activities('./sample.fit');
+
+# Test 1: Sport field (should be populated from session data)
+query I
+SELECT sport IS NOT NULL AND sport != '' FROM test_activities;
+----
+true
+
+# Test 2: Product field investigation
+query T
+SELECT product FROM test_activities;
+----
+Intervals.icu
+
+# Verify product field is now populated (was fixed)
+query I
+SELECT product IS NOT NULL AND product != '' FROM test_activities;
+----
+true
+
+# Test 3: File ID field investigation
+query T
+SELECT file_id FROM test_activities;
+----
+(empty)
+
+# Check if file_id being empty is expected (Number field may not be set in this FIT file)
+query I
+SELECT file_id IS NULL OR file_id = '' FROM test_activities;
+----
+true
+
+# Test 4: Total calories field investigation
+query I
+SELECT total_calories FROM test_activities;
+----
+0
+
+# Verify this matches session data (calories not recorded in this activity)
+query I
+SELECT (SELECT total_calories FROM test_activities) = (SELECT total_calories FROM fit_sessions('./sample.fit'));
+----
+true
+
+# Test 5: Verify other populated fields work correctly
+query I
+SELECT manufacturer IS NOT NULL AND manufacturer != '' FROM test_activities;
+----
+true
+
+query I
+SELECT sport IS NOT NULL AND sport != '' FROM test_activities;
+----
+true
+
+query I
+SELECT total_distance > 0 FROM test_activities;
+----
+true
+
+# Test 6: Document that some fields being empty is expected behavior
+# File ID: May be empty if the FIT file doesn't set the Number field
+# Total calories: May be 0 if the device doesn't calculate/record calories
+# Product: Now populated correctly with product name when available
+
+# Clean up
+statement ok
+DROP TABLE test_activities;

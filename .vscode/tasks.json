@@ -1,0 +1,179 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "build",
+      "type": "shell",
+      "command": "make",
+      "args": ["GEN=ninja"],
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": true,
+        "panel": "shared",
+        "showReuseMessage": false,
+        "clear": true
+      },
+      "problemMatcher": [
+        "$gcc"
+      ],
+      "options": {
+        "env": {
+          "PATH": "/usr/local/bin:${env:PATH}"
+        }
+      },
+      "runOptions": {
+        "runOn": "folderOpen"
+      }
+    },
+    {
+      "label": "clean",
+      "type": "shell",
+      "command": "make",
+      "args": ["clean"],
+      "group": "build",
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "shared",
+        "showReuseMessage": false,
+        "clear": true
+      },
+      "options": {
+        "env": {
+          "PATH": "/usr/local/bin:${env:PATH}"
+        }
+      }
+    },
+    {
+      "label": "test",
+      "type": "shell",
+      "command": "make",
+      "args": ["test"],
+      "group": {
+        "kind": "test",
+        "isDefault": true
+      },
+      "dependsOn": "build",
+      "dependsOrder": "sequence",
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": true,
+        "panel": "dedicated",
+        "showReuseMessage": false,
+        "clear": true
+      },
+      "problemMatcher": [
+        "$gcc"
+      ],
+      "options": {
+        "env": {
+          "PATH": "/usr/local/bin:${env:PATH}"
+        }
+      }
+    },
+    {
+      "label": "run-duckdb",
+      "type": "shell",
+      "command": "./build/release/duckdb",
+      "args": [],
+      "group": "test",
+      "dependsOn": "build",
+      "dependsOrder": "sequence",
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": true,
+        "panel": "dedicated",
+        "showReuseMessage": false,
+        "clear": false
+      },
+      "isBackground": false,
+      "options": {
+        "env": {
+          "PATH": "/usr/local/bin:${env:PATH}"
+        }
+      },
+      "runOptions": {
+        "instanceLimit": 1
+      }
+    },
+    {
+      "label": "install-extension",
+      "type": "shell",
+      "command": "./build/release/duckdb",
+      "args": [
+        "-c",
+        "INSTALL '${workspaceFolder}/build/release/extension/fit/fit.duckdb_extension'; LOAD fit;"
+      ],
+      "group": "build",
+      "dependsOn": "build",
+      "dependsOrder": "sequence",
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": true,
+        "panel": "shared",
+        "showReuseMessage": false,
+        "clear": true
+      },
+      "options": {
+        "env": {
+          "PATH": "/usr/local/bin:${env:PATH}"
+        }
+      }
+    },
+    {
+      "label": "build-and-run",
+      "dependsOn": [
+        "build",
+        "run-duckdb"
+      ],
+      "dependsOrder": "sequence",
+      "group": "test",
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": true,
+        "panel": "dedicated"
+      }
+    },
+    {
+      "label": "build-and-test",
+      "dependsOn": [
+        "build",
+        "test"
+      ],
+      "dependsOrder": "sequence",
+      "group": "test",
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": true,
+        "panel": "dedicated"
+      }
+    },
+    {
+      "label": "full-rebuild",
+      "dependsOn": [
+        "clean",
+        "build"
+      ],
+      "dependsOrder": "sequence",
+      "group": "build",
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": true,
+        "panel": "shared",
+        "clear": true
+      }
+    }
+  ]
+}

@@ -1,0 +1,119 @@
+{
+    // General Settings
+    "files.trimTrailingWhitespace": true,
+    "files.insertFinalNewline": true,
+    "editor.tabSize": 4,
+    "editor.insertSpaces": false, // Use tabs for C++
+    "editor.detectIndentation": true,
+    "editor.formatOnSave": true,
+
+    // C++ Specific Settings
+    "C_Cpp.default.cppStandard": "c++17",
+    "C_Cpp.default.cStandard": "c17",
+    "C_Cpp.default.intelliSenseMode": "macos-clang-x64",
+    "C_Cpp.formatting": "clangFormat",
+    "C_Cpp.clang_format_style": "file",
+    "C_Cpp.errorSquiggles": "enabled",
+
+    // GitHub Copilot Settings
+    "github.copilot.enable": {
+        "*": true,
+        "yaml": false,
+        "plaintext": false,
+        "markdown": false
+    },
+    "github.copilot.advanced": {
+        "length": 500,
+        "temperature": "",
+        "top_p": "",
+        "listCount": 10,
+        "inlineSuggestCount": 3
+    },
+
+    // Chat Settings
+    "chat.agent.maxRequests": 300,
+    "chat.tools.terminal.enableAutoApprove": true,
+    "chat.tools.terminal.autoApprove": {
+        "rm": false,
+        "rmdir": false,
+        "del": false,
+        "kill": false,
+        "curl": false,
+        "wget": false,
+        "eval": false,
+        "chmod": false,
+        "chown": false,
+        "/^Remove-Item\\b/i": false
+    },
+
+    // File Associations
+    "files.associations": {
+        "vector": "cpp",
+        "*.test": "sql",
+        "*.fit": "binary",
+        "*.cmake": "cmake"
+    },
+
+    // SQL Settings
+    "sql.format.alignColumnDefinitions": true,
+    "sql.format.datatypeCase": "upper",
+    "sql.format.keywordCase": "upper",
+
+    // Search Settings
+    "search.exclude": {
+        "**/build/**": true,
+        "**/duckdb_unittest_tempdir/**": true,
+        "**/extension-ci-tools/**": true,
+        "**/.git/**": true,
+        "**/node_modules/**": true
+    },
+
+    // File Watcher Settings
+    "files.watcherExclude": {
+        "**/build/**": true,
+        "**/duckdb_unittest_tempdir/**": true
+    },
+
+    // Terminal Settings
+    "terminal.integrated.cwd": "${workspaceFolder}",
+    "terminal.integrated.env.osx": {
+        "PATH": "/usr/local/bin:${env:PATH}"
+    },
+
+    // Language Specific Settings
+    "[cpp]": {
+        "editor.defaultFormatter": "ms-vscode.cpptools",
+        "editor.insertSpaces": false,
+        "editor.tabSize": 4
+    },
+    "[c]": {
+        "editor.defaultFormatter": "ms-vscode.cpptools",
+        "editor.insertSpaces": false,
+        "editor.tabSize": 4
+    },
+    "[cmake]": {
+        "editor.insertSpaces": true,
+        "editor.tabSize": 4
+    },
+    "[sql]": {
+        "editor.insertSpaces": true,
+        "editor.tabSize": 2
+    },
+    "[markdown]": {
+        "editor.insertSpaces": true,
+        "editor.tabSize": 2,
+        "files.trimTrailingWhitespace": false
+    },
+    "[json]": {
+        "editor.insertSpaces": true,
+        "editor.tabSize": 2
+    },
+
+    // IntelliSense Settings
+    "C_Cpp.intelliSenseEngine": "default",
+    "C_Cpp.autocomplete": "default",
+
+    // Build Settings
+    "cmake.buildDirectory": "${workspaceFolder}/build/release",
+    "cmake.generator": "Ninja"
+}
