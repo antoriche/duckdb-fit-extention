@@ -4,16 +4,37 @@ This repository is based on the [DuckDB extension template](https://github.com/d
 
 This extension allows you to read Garmin `.fit` files using DuckDB, providing access to GPS tracks, heart rate data, power metrics, and other sensor information from fitness devices.
 
-## Features
+## Table Functions
 
-- **Read FIT Files**: Parse Garmin FIT files directly in SQL queries
-- **Multiple Data Views**: Access records, activities, sessions, laps, devices, events, and user profiles
-- **Rich Data Types**: Support for GPS coordinates, timestamps, sensor data, and metadata
-- **Performance Optimized**: Efficient parsing using the official Garmin FIT SDK
+| Function                   | Description                                        |
+| -------------------------- | -------------------------------------------------- |
+| `fit_records(filename)`    | Main records table with GPS tracks and sensor data |
+| `fit_activities(filename)` | Activity metadata and summaries                    |
+| `fit_sessions(filename)`   | Training session information                       |
+| `fit_laps(filename)`       | Individual lap data and splits                     |
+| `fit_devices(filename)`    | Device information and sensor details              |
+| `fit_events(filename)`     | Activity events and markers                        |
+| `fit_users(filename)`      | User profile information                           |
 
-## Quick Start
+### Example
 
-### Installation
+`SELECT * FROM fit_records('sample.fit') LIMIT 5;`
+
+| timestamp              | latitude           | longitude           | altitude | enhanced_altitude | distance | speed | enhanced_speed | vertical_speed | power | motor_power | accumulated_power | compressed_accumulated_power | heart_rate | total_hemoglobin_conc | total_hemoglobin_conc_min | total_hemoglobin_conc_max | saturated_hemoglobin_percent | saturated_hemoglobin_percent_min | saturated_hemoglobin_percent_max | cadence | cadence256 | fractional_cadence | temperature | core_temperature | grade | resistance | left_right_balance | left_torque_effectiveness | right_torque_effectiveness | left_pedal_smoothness | right_pedal_smoothness | combined_pedal_smoothness | left_pco | right_pco | vertical_oscillation | stance_time_percent | stance_time | stance_time_balance | step_length | vertical_ratio | cycle_length | cycle_length16 | cycles | total_cycles | time_from_course | gps_accuracy | calories | zone | activity_type | stroke_type | time128 | grit | flow | current_stress | ebike_travel_range | ebike_battery_level | ebike_assist_mode | ebike_assist_level_percent | battery_soc | ball_speed | absolute_pressure | depth | next_stop_depth | next_stop_time | time_to_surface | ndl_time | cns_load | n2_load | air_time_remaining | pressure_sac | volume_sac | rmv  | ascent_rate | po2  | respiration_rate | enhanced_respiration_rate | device_index | file_source |
+| ---------------------- | ------------------ | ------------------- | -------- | ----------------- | -------- | ----- | -------------- | -------------- | ----- | ----------- | ----------------- | ---------------------------- | ---------- | --------------------- | ------------------------- | ------------------------- | ---------------------------- | -------------------------------- | -------------------------------- | ------- | ---------- | ------------------ | ----------- | ---------------- | ----- | ---------- | ------------------ | ------------------------- | -------------------------- | --------------------- | ---------------------- | ------------------------- | -------- | --------- | -------------------- | ------------------- | ----------- | ------------------- | ----------- | -------------- | ------------ | -------------- | ------ | ------------ | ---------------- | ------------ | -------- | ---- | ------------- | ----------- | ------- | ---- | ---- | -------------- | ------------------ | ------------------- | ----------------- | -------------------------- | ----------- | ---------- | ----------------- | ----- | --------------- | -------------- | --------------- | -------- | -------- | ------- | ------------------ | ------------ | ---------- | ---- | ----------- | ---- | ---------------- | ------------------------- | ------------ | ----------- |
+| 2025-09-27 20:06:48+00 | 51.18182751350105  | -115.57556913234293 | -223.0   | -223.0            | 0.02     | 0.002 | 0.002          | NULL           | NULL  | NULL        | NULL              | NULL                         | 93         | NULL                  | NULL                      | NULL                      | NULL                         | NULL                             | NULL                             | NULL    | NULL       | NULL               | NULL        | NULL             | NULL  | NULL       | NULL               | NULL                      | NULL                       | NULL                  | NULL                   | NULL                      | NULL     | NULL      | NULL                 | NULL                | NULL        | NULL                | NULL        | NULL           | NULL         | NULL           | NULL   | NULL         | NULL             | NULL         | NULL     | NULL | E-Biking      |             | NULL    | NULL | NULL | NULL           | NULL               | NULL                | NULL              | NULL                       | NULL        | NULL       | NULL              | NULL  | NULL            | NULL           | NULL            | NULL     | NULL     | NULL    | NULL               | NULL         | NULL       | NULL | NULL        | NULL | NULL             | NULL                      | NULL         | sample.fit  |
+| 2025-09-27 20:06:49+00 | 51.18182365782559  | -115.57554624974728 | -223.0   | -223.0            | 0.03     | 0.001 | 0.001          | NULL           | NULL  | NULL        | NULL              | NULL                         | 93         | NULL                  | NULL                      | NULL                      | NULL                         | NULL                             | NULL                             | NULL    | NULL       | NULL               | NULL        | NULL             | NULL  | NULL       | NULL               | NULL                      | NULL                       | NULL                  | NULL                   | NULL                      | NULL     | NULL      | NULL                 | NULL                | NULL        | NULL                | NULL        | NULL           | NULL         | NULL           | NULL   | NULL         | NULL             | NULL         | NULL     | NULL | E-Biking      |             | NULL    | NULL | NULL | NULL           | NULL               | NULL                | NULL              | NULL                       | NULL        | NULL       | NULL              | NULL  | NULL            | NULL           | NULL            | NULL     | NULL     | NULL    | NULL               | NULL         | NULL       | NULL | NULL        | NULL | NULL             | NULL                      | NULL         | sample.fit  |
+| 2025-09-27 20:06:50+00 | 51.18182751350105  | -115.57552336715162 | -223.0   | -223.0            | 0.05     | 0.002 | 0.002          | NULL           | NULL  | NULL        | NULL              | NULL                         | 94         | NULL                  | NULL                      | NULL                      | NULL                         | NULL                             | NULL                             | NULL    | NULL       | NULL               | NULL        | NULL             | NULL  | NULL       | NULL               | NULL                      | NULL                       | NULL                  | NULL                   | NULL                      | NULL     | NULL      | NULL                 | NULL                | NULL        | NULL                | NULL        | NULL           | NULL         | NULL           | NULL   | NULL         | NULL             | NULL         | NULL     | NULL | E-Biking      |             | NULL    | NULL | NULL | NULL           | NULL               | NULL                | NULL              | NULL                       | NULL        | NULL       | NULL              | NULL  | NULL            | NULL           | NULL            | NULL     | NULL     | NULL    | NULL               | NULL         | NULL       | NULL | NULL        | NULL | NULL             | NULL                      | NULL         | sample.fit  |
+| 2025-09-27 20:06:51+00 | 51.181831285357475 | -115.57549285702407 | -223.0   | -223.0            | 0.07     | 0.002 | 0.002          | NULL           | NULL  | NULL        | NULL              | NULL                         | 94         | NULL                  | NULL                      | NULL                      | NULL                         | NULL                             | NULL                             | NULL    | NULL       | NULL               | NULL        | NULL             | NULL  | NULL       | NULL               | NULL                      | NULL                       | NULL                  | NULL                   | NULL                      | NULL     | NULL      | NULL                 | NULL                | NULL        | NULL                | NULL        | NULL           | NULL         | NULL           | NULL   | NULL         | NULL             | NULL         | NULL     | NULL | E-Biking      |             | NULL    | NULL | NULL | NULL           | NULL               | NULL                | NULL              | NULL                       | NULL        | NULL       | NULL              | NULL  | NULL            | NULL           | NULL            | NULL     | NULL     | NULL    | NULL               | NULL         | NULL       | NULL | NULL        | NULL | NULL             | NULL                      | NULL         | sample.fit  |
+| 2025-09-27 20:06:52+00 | 51.181831285357475 | -115.57545463554561 | -223.0   | -223.0            | 0.09     | 0.002 | 0.002          | NULL           | NULL  | NULL        | NULL              | NULL                         | 94         | NULL                  | NULL                      | NULL                      | NULL                         | NULL                             | NULL                             | NULL    | NULL       | NULL               | NULL        | NULL             | NULL  | NULL       | NULL               | NULL                      | NULL                       | NULL                  | NULL                   | NULL                      | NULL     | NULL      | NULL                 | NULL                | NULL        | NULL                | NULL        | NULL           | NULL         | NULL           | NULL   | NULL         | NULL             | NULL         | NULL     | NULL | E-Biking      |             | NULL    | NULL | NULL | NULL           | NULL               | NULL                | NULL              | NULL                       | NULL        | NULL       | NULL              | NULL  | NULL            | NULL           | NULL            | NULL     | NULL     | NULL    | NULL               | NULL         | NULL       | NULL | NULL        | NULL | NULL             | NULL                      | NULL         | sample.fit  |
+
+`SELECT * FROM fit_activities('sample.fit');`
+
+| activity_id | file_id | timestamp              | local_timestamp        | start_time             | total_timer_time | total_elapsed_time | total_distance | sport    | sub_sport | manufacturer | product       | device_serial_number | software_version | total_calories | total_ascent | total_descent | avg_heart_rate | max_heart_rate | avg_speed            | max_speed            | avg_power | max_power | avg_cadence | max_cadence | start_position_lat | start_position_long | end_position_lat | end_position_long | file_source |
+| ----------- | ------- | ---------------------- | ---------------------- | ---------------------- | ---------------- | ------------------ | -------------- | -------- | --------- | ------------ | ------------- | -------------------- | ---------------- | -------------- | ------------ | ------------- | -------------- | -------------- | -------------------- | -------------------- | --------- | --------- | ----------- | ----------- | ------------------ | ------------------- | ---------------- | ----------------- | ----------- |
+| 0           |         | 2025-09-28 00:33:53+00 | 2025-09-27 18:33:53+00 | 2025-09-27 20:06:48+00 | 7.931            | 16.025             | 359.3244921875 | E-Biking | Generic   | Development  | Intervals.icu | 0                    |                  | 0              | 438.0        | 410.0         | 94             | 133            | 0.004544000148773194 | 0.013026000022888184 | NULL      | NULL      | NULL        | NULL        | NULL               | NULL                | NULL             | NULL              | sample.fit  |
+
+## Development
 
 ```bash
 # Build the extension
@@ -22,178 +43,3 @@ GEN=ninja make
 # Install and load
 ./build/release/duckdb
 ```
-
-### Basic Usage
-
-```sql
-SELECT timestamp, latitude, longitude, heart_rate, power, speed
-FROM fit('sample.fit')
-WHERE latitude IS NOT NULL
-LIMIT 10;
-
--- Get activity summary
-SELECT * FROM fit_activities('sample.fit');
-
--- Analyze lap performance
-SELECT lap_id, total_distance, avg_speed, avg_heart_rate, avg_power
-FROM fit_laps('sample.fit');
-```
-
-## Table Functions
-
-| Function                   | Description                                        |
-| -------------------------- | -------------------------------------------------- |
-| `fit(filename)`            | Main records table with GPS tracks and sensor data |
-| `fit_activities(filename)` | Activity metadata and summaries                    |
-| `fit_sessions(filename)`   | Training session information                       |
-| `fit_laps(filename)`       | Individual lap data and splits                     |
-| `fit_devices(filename)`    | Device information and sensor details              |
-| `fit_events(filename)`     | Activity events and markers                        |
-| `fit_users(filename)`      | User profile information                           |
-
-## Data Schema
-
-The extension provides comprehensive access to FIT file data:
-
-### Records Table
-
-- **Location**: `latitude`, `longitude`, `altitude`, `enhanced_altitude`
-- **Movement**: `speed`, `enhanced_speed`, `distance`, `vertical_speed`
-- **Power**: `power`, `motor_power`, `accumulated_power`
-- **Physiological**: `heart_rate`, `cadence`, `temperature`, `respiration_rate`
-- **Cycling**: `grade`, `left_right_balance`, `torque_effectiveness`, `pedal_smoothness`
-- **Running**: `vertical_oscillation`, `stance_time`, `step_length`, `vertical_ratio`
-- **And many more fields...**
-
-## GitHub Copilot Integration
-
-This project is optimized for GitHub Copilot development:
-
-### Setup
-
-1. Install recommended VS Code extensions from `.vscode/extensions.json`
-2. Review `.copilot-instructions.md` for detailed development context
-3. Use the provided build tasks and debugging configurations
-
-### Development Workflow
-
-```bash
-# Quick build and test
-Ctrl/Cmd + Shift + P → "Tasks: Run Task" → "build"
-Ctrl/Cmd + Shift + P → "Tasks: Run Task" → "test"
-
-# Launch DuckDB with extension
-Ctrl/Cmd + Shift + P → "Tasks: Run Task" → "run-duckdb"
-```
-
-See [`DEVELOPMENT.md`](DEVELOPMENT.md) for comprehensive development guidelines.
-
-## Building
-
-### Prerequisites
-
-- CMake 3.5+
-- Ninja (recommended)
-- vcpkg (for dependencies)
-- DuckDB (included as submodule)
-
-### Build Steps
-
-```bash
-# Clone with submodules
-git clone --recursive https://github.com/your-repo/duckdb-fit-extension.git
-
-# Build with Ninja (recommended)
-GEN=ninja make
-
-# Or build with make
-make
-
-# Run tests
-make test
-```
-
-## Dependencies
-
-- **DuckDB**: Core database engine
-- **OpenSSL**: Cryptographic functions (via vcpkg)
-- **Garmin FIT SDK**: Official FIT file parsing (included)
-
-## Testing
-
-```bash
-# Run all tests
-make test
-
-# Interactive testing
-./build/release/duckdb
-LOAD 'build/release/extension/fit/fit.duckdb_extension';
-SELECT * FROM read_fit('sample.fit') LIMIT 5;
-```
-
-## Examples
-
-### Analyze Heart Rate Zones
-
-```sql
-SELECT
-    CASE
-        WHEN heart_rate < 120 THEN 'Zone 1'
-        WHEN heart_rate < 140 THEN 'Zone 2'
-        WHEN heart_rate < 160 THEN 'Zone 3'
-        WHEN heart_rate < 180 THEN 'Zone 4'
-        ELSE 'Zone 5'
-    END as hr_zone,
-    COUNT(*) as seconds,
-    AVG(power) as avg_power
-FROM read_fit('workout.fit')
-WHERE heart_rate > 0
-GROUP BY hr_zone
-ORDER BY hr_zone;
-```
-
-### GPS Track Analysis
-
-```sql
-SELECT
-    timestamp,
-    latitude,
-    longitude,
-    speed * 3.6 as speed_kmh,  -- Convert m/s to km/h
-    altitude,
-    heart_rate
-FROM read_fit('ride.fit')
-WHERE latitude IS NOT NULL
-ORDER BY timestamp;
-```
-
-### Power Analysis
-
-```sql
-SELECT
-    session_id,
-    avg_power,
-    max_power,
-    normalized_power,
-    intensity_factor,
-    training_stress_score
-FROM read_fit_sessions('power_workout.fit');
-```
-
-## Contributing
-
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes following the development guidelines
-4. Add tests for new functionality
-5. Submit a pull request
-
-## License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## Acknowledgments
-
-- [DuckDB](https://duckdb.org/) for the excellent database engine
-- [Garmin](https://developer.garmin.com/fit/) for the FIT SDK and protocol documentation
-- The DuckDB community for the extension template and support
