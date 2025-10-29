@@ -9,8 +9,6 @@
 // Tag = production/release/21.171.0-0-g57fed75
 /////////////////////////////////////////////////////////////////////////////////////////////
 
-
-
 #if !defined(FIT_BUFFERED_MESG_BROADCASTER_HPP)
 #define FIT_BUFFERED_MESG_BROADCASTER_HPP
 
@@ -18,20 +16,17 @@
 #include "fit_mesg_broadcast_plugin.hpp"
 #include <vector>
 
+namespace fit {
 
-namespace fit
-{
+class BufferedMesgBroadcaster : public MesgBroadcaster {
+public:
+	void RegisterMesgBroadcastPlugin(MesgBroadcastPlugin *plugin);
+	void OnMesg(Mesg &mesg);
+	void Broadcast(void);
 
-class BufferedMesgBroadcaster : public MesgBroadcaster
-{
-   public:
-     void RegisterMesgBroadcastPlugin(MesgBroadcastPlugin* plugin);
-     void OnMesg(Mesg& mesg);
-     void Broadcast(void);
-
-   private:
-     std::vector<Mesg> mesgs;
-     std::vector<MesgBroadcastPlugin*> plugins;
+private:
+	std::vector<Mesg> mesgs;
+	std::vector<MesgBroadcastPlugin *> plugins;
 };
 
 } // namespace fit

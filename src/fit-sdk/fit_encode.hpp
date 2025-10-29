@@ -9,7 +9,6 @@
 // Tag = production/release/21.171.0-0-g57fed75
 /////////////////////////////////////////////////////////////////////////////////////////////
 
-
 #if !defined(FIT_ENCODE_HPP)
 #define FIT_ENCODE_HPP
 
@@ -22,40 +21,33 @@
 #include "fit_mesg_listener.hpp"
 #include "fit_protocol_validator.hpp"
 
-namespace fit
-{
+namespace fit {
 
-class Encode
-    : public MesgListener
-    , public MesgDefinitionListener
-{
+class Encode : public MesgListener, public MesgDefinitionListener {
 public:
-    DEPRECATED
-        (
-        "Encode now supports multiple protocol version encoding use: "
-        "Encode::Encode(fit::ProtocolVersion) to ensure features "
-        "are correctly validated"
-        )
-    Encode(void);
-    Encode( ProtocolVersion version );
+	DEPRECATED("Encode now supports multiple protocol version encoding use: "
+	           "Encode::Encode(fit::ProtocolVersion) to ensure features "
+	           "are correctly validated")
+	Encode(void);
+	Encode(ProtocolVersion version);
 
-    void Open(std::iostream& file);
-    void Write(const MesgDefinition& mesgDef);
-    void Write(const Mesg& mesg);
-    void Write(const std::vector<Mesg>& mesgs);
-    FIT_BOOL Close(void);
-    void OnMesg(Mesg& mesg);
-    void OnMesgDefinition(MesgDefinition& mesgDef);
+	void Open(std::iostream &file);
+	void Write(const MesgDefinition &mesgDef);
+	void Write(const Mesg &mesg);
+	void Write(const std::vector<Mesg> &mesgs);
+	FIT_BOOL Close(void);
+	void OnMesg(Mesg &mesg);
+	void OnMesgDefinition(MesgDefinition &mesgDef);
 
 private:
-    void WriteFileHeader();
+	void WriteFileHeader();
 
-    MesgDefinition lastMesgDefinition[FIT_MAX_LOCAL_MESGS];
-    FIT_UINT32 dataSize;
-    std::iostream *file;
+	MesgDefinition lastMesgDefinition[FIT_MAX_LOCAL_MESGS];
+	FIT_UINT32 dataSize;
+	std::iostream *file;
 
-    ProtocolVersion version;
-    ProtocolValidator validator;
+	ProtocolVersion version;
+	ProtocolValidator validator;
 };
 
 } // namespace fit

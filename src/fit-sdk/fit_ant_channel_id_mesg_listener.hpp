@@ -9,20 +9,18 @@
 // Tag = production/release/21.171.0-0-g57fed75
 /////////////////////////////////////////////////////////////////////////////////////////////
 
-
 #if !defined(FIT_ANT_CHANNEL_ID_MESG_LISTENER_HPP)
 #define FIT_ANT_CHANNEL_ID_MESG_LISTENER_HPP
 
 #include "fit_ant_channel_id_mesg.hpp"
 
-namespace fit
-{
+namespace fit {
 
-class AntChannelIdMesgListener
-{
+class AntChannelIdMesgListener {
 public:
-    virtual ~AntChannelIdMesgListener() {}
-    virtual void OnMesg(AntChannelIdMesg& mesg) = 0;
+	virtual ~AntChannelIdMesgListener() {
+	}
+	virtual void OnMesg(AntChannelIdMesg &mesg) = 0;
 };
 
 } // namespace fit

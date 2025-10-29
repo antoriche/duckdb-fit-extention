@@ -9,37 +9,30 @@
 // Tag = production/release/21.171.0-0-g57fed75
 /////////////////////////////////////////////////////////////////////////////////////////////
 
-
 #include "fit_accumulated_field.hpp"
 
-namespace fit
-{
+namespace fit {
 
-AccumulatedField::AccumulatedField()
-    : lastValue(0), accumulatedValue(0)
-{
+AccumulatedField::AccumulatedField() : lastValue(0), accumulatedValue(0) {
 }
 
 AccumulatedField::AccumulatedField(const FIT_UINT16 newMesgNum, const FIT_UINT8 destFieldNum)
-    : mesgNum(newMesgNum), destFieldNum(destFieldNum), lastValue(0), accumulatedValue(0)
-{
+    : mesgNum(newMesgNum), destFieldNum(destFieldNum), lastValue(0), accumulatedValue(0) {
 }
 
-FIT_UINT32 AccumulatedField::Accumulate(const FIT_UINT32 value, const FIT_UINT8 bits)
-{
-    FIT_UINT32 mask = ((FIT_UINT32) 1 << bits) - 1;
+FIT_UINT32 AccumulatedField::Accumulate(const FIT_UINT32 value, const FIT_UINT8 bits) {
+	FIT_UINT32 mask = ((FIT_UINT32)1 << bits) - 1;
 
-    accumulatedValue += (value - lastValue) & mask;
-    lastValue = value;
+	accumulatedValue += (value - lastValue) & mask;
+	lastValue = value;
 
-    return accumulatedValue;
+	return accumulatedValue;
 }
 
-FIT_UINT32 AccumulatedField::Set(FIT_UINT32 value)
-{
-    accumulatedValue = value;
-    this->lastValue = value;
-    return accumulatedValue;
+FIT_UINT32 AccumulatedField::Set(FIT_UINT32 value) {
+	accumulatedValue = value;
+	this->lastValue = value;
+	return accumulatedValue;
 }
 
 } // namespace fit

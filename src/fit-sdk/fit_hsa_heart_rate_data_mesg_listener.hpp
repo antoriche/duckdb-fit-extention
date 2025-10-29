@@ -9,20 +9,18 @@
 // Tag = production/release/21.171.0-0-g57fed75
 /////////////////////////////////////////////////////////////////////////////////////////////
 
-
 #if !defined(FIT_HSA_HEART_RATE_DATA_MESG_LISTENER_HPP)
 #define FIT_HSA_HEART_RATE_DATA_MESG_LISTENER_HPP
 
 #include "fit_hsa_heart_rate_data_mesg.hpp"
 
-namespace fit
-{
+namespace fit {
 
-class HsaHeartRateDataMesgListener
-{
+class HsaHeartRateDataMesgListener {
 public:
-    virtual ~HsaHeartRateDataMesgListener() {}
-    virtual void OnMesg(HsaHeartRateDataMesg& mesg) = 0;
+	virtual ~HsaHeartRateDataMesgListener() {
+	}
+	virtual void OnMesg(HsaHeartRateDataMesg &mesg) = 0;
 };
 
 } // namespace fit

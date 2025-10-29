@@ -9,37 +9,31 @@
 // Tag = production/release/21.171.0-0-g57fed75
 /////////////////////////////////////////////////////////////////////////////////////////////
 
-
 #include "fit_buffered_record_mesg_broadcaster.hpp"
 #include <algorithm>
 
-namespace fit
-{
+namespace fit {
 
-BufferedRecordMesgBroadcaster::BufferedRecordMesgBroadcaster(void)
-{
+BufferedRecordMesgBroadcaster::BufferedRecordMesgBroadcaster(void) {
 }
 
-void BufferedRecordMesgBroadcaster::AddListener(BufferedRecordMesgListener& mesgListener)
-{
-   listeners.push_back(&mesgListener);
+void BufferedRecordMesgBroadcaster::AddListener(BufferedRecordMesgListener &mesgListener) {
+	listeners.push_back(&mesgListener);
 }
 
-void BufferedRecordMesgBroadcaster::RemoveListener(BufferedRecordMesgListener& mesgListener)
-{
-   std::vector<BufferedRecordMesgListener*>::iterator it = std::find(listeners.begin(), listeners.end(), &mesgListener);
-   if (listeners.end() != it)
-      listeners.erase(it);
+void BufferedRecordMesgBroadcaster::RemoveListener(BufferedRecordMesgListener &mesgListener) {
+	std::vector<BufferedRecordMesgListener *>::iterator it =
+	    std::find(listeners.begin(), listeners.end(), &mesgListener);
+	if (listeners.end() != it)
+		listeners.erase(it);
 }
 
-void BufferedRecordMesgBroadcaster::OnMesg(RecordMesg& mesg)
-{
-   bufferedRecordMesg.SetFields(mesg);
-   
-   for (int i = 0; i < (int)listeners.size(); i++)
-   {
-      listeners[i]->OnMesg(bufferedRecordMesg);
-   }
+void BufferedRecordMesgBroadcaster::OnMesg(RecordMesg &mesg) {
+	bufferedRecordMesg.SetFields(mesg);
+
+	for (int i = 0; i < (int)listeners.size(); i++) {
+		listeners[i]->OnMesg(bufferedRecordMesg);
+	}
 }
 
 } // namespace fit

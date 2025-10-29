@@ -9,7 +9,6 @@
 // Tag = production/release/21.171.0-0-g57fed75
 /////////////////////////////////////////////////////////////////////////////////////////////
 
-
 #if !defined(FIT_UNICODE_HPP)
 #define FIT_UNICODE_HPP
 
@@ -17,25 +16,23 @@
 #include <string>
 #include "fit.hpp"
 
-namespace fit
-{
+namespace fit {
 
-class Unicode
-{
+class Unicode {
 public:
-    typedef std::string UTF8_STRING;    // UTF-8 encoded strings used for file/message input and output.
-    typedef std::fstream UTF8_FSTREAM;
-    typedef std::ofstream UTF8_OFSTREAM;
-    typedef std::ifstream UTF8_IFSTREAM;
-    typedef std::stringstream UTF8_SSTREAM;
-    typedef std::ostringstream UTF8_OSSTREAM;
-    typedef std::istringstream UTF8_ISSTREAM;
+	typedef std::string UTF8_STRING; // UTF-8 encoded strings used for file/message input and output.
+	typedef std::fstream UTF8_FSTREAM;
+	typedef std::ofstream UTF8_OFSTREAM;
+	typedef std::ifstream UTF8_IFSTREAM;
+	typedef std::stringstream UTF8_SSTREAM;
+	typedef std::ostringstream UTF8_OSSTREAM;
+	typedef std::istringstream UTF8_ISSTREAM;
 
 public:
-    static Unicode::UTF8_STRING Encode_BaseToUTF8(const FIT_WSTRING& strSrc);
-    static FIT_WSTRING Encode_UTF8ToBase(const Unicode::UTF8_STRING& strSrc);
-    static Unicode::UTF8_STRING Copy_StdToUTF8(const std::string& strSrc);
-    static std::string Copy_UTF8ToStd(const Unicode::UTF8_STRING& strSrc);
+	static Unicode::UTF8_STRING Encode_BaseToUTF8(const FIT_WSTRING &strSrc);
+	static FIT_WSTRING Encode_UTF8ToBase(const Unicode::UTF8_STRING &strSrc);
+	static Unicode::UTF8_STRING Copy_StdToUTF8(const std::string &strSrc);
+	static std::string Copy_UTF8ToStd(const Unicode::UTF8_STRING &strSrc);
 };
 
 } // namespace fit

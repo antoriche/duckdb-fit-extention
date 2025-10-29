@@ -9,7 +9,6 @@
 // Tag = production/release/21.171.0-0-g57fed75
 /////////////////////////////////////////////////////////////////////////////////////////////
 
-
 #if !defined(FIT_FIELD_DEFINITION_HPP)
 #define FIT_FIELD_DEFINITION_HPP
 
@@ -17,29 +16,27 @@
 #include "fit.hpp"
 #include "fit_field.hpp"
 
-namespace fit
-{
+namespace fit {
 
-class FieldDefinition
-{
+class FieldDefinition {
 public:
-    FieldDefinition();
-    FieldDefinition(const Field& field);
-    FieldDefinition(const Field* field);
-    FIT_UINT8 GetNum() const;
-    FIT_UINT8 GetSize() const;
-    FIT_UINT8 GetType() const;
-    void SetNum(const FIT_UINT8 newNum);
-    void SetSize(const FIT_UINT8 newSize);
-    void SetType(const FIT_UINT8 newType);
-    FIT_BOOL operator==(const FieldDefinition& field) const;
-    FIT_BOOL operator!=(const FieldDefinition& field) const;
-    FIT_UINT8 Write(std::ostream &file) const;
+	FieldDefinition();
+	FieldDefinition(const Field &field);
+	FieldDefinition(const Field *field);
+	FIT_UINT8 GetNum() const;
+	FIT_UINT8 GetSize() const;
+	FIT_UINT8 GetType() const;
+	void SetNum(const FIT_UINT8 newNum);
+	void SetSize(const FIT_UINT8 newSize);
+	void SetType(const FIT_UINT8 newType);
+	FIT_BOOL operator==(const FieldDefinition &field) const;
+	FIT_BOOL operator!=(const FieldDefinition &field) const;
+	FIT_UINT8 Write(std::ostream &file) const;
 
 private:
-    FIT_UINT8 num;
-    FIT_UINT8 size;
-    FIT_UINT8 type;
+	FIT_UINT8 num;
+	FIT_UINT8 size;
+	FIT_UINT8 type;
 };
 
 } // namespace fit

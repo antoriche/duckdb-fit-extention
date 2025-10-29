@@ -9,20 +9,18 @@
 // Tag = production/release/21.171.0-0-g57fed75
 /////////////////////////////////////////////////////////////////////////////////////////////
 
-
 #if !defined(FIT_MEMO_GLOB_MESG_LISTENER_HPP)
 #define FIT_MEMO_GLOB_MESG_LISTENER_HPP
 
 #include "fit_memo_glob_mesg.hpp"
 
-namespace fit
-{
+namespace fit {
 
-class MemoGlobMesgListener
-{
+class MemoGlobMesgListener {
 public:
-    virtual ~MemoGlobMesgListener() {}
-    virtual void OnMesg(MemoGlobMesg& mesg) = 0;
+	virtual ~MemoGlobMesgListener() {
+	}
+	virtual void OnMesg(MemoGlobMesg &mesg) = 0;
 };
 
 } // namespace fit

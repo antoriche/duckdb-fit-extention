@@ -9,22 +9,18 @@
 // Tag = production/release/21.171.0-0-g57fed75
 /////////////////////////////////////////////////////////////////////////////////////////////
 
-
 #if !defined(FIT_CRC_HPP)
 #define FIT_CRC_HPP
 
 #include "fit.hpp"
 
-namespace fit
-{
+namespace fit {
 
-class CRC
-{
-   public:
-      static FIT_UINT16 Get16(FIT_UINT16 crc, FIT_UINT8 byte);
-      static FIT_UINT16 Calc16(const volatile void *data, FIT_UINT32 size);
+class CRC {
+public:
+	static FIT_UINT16 Get16(FIT_UINT16 crc, FIT_UINT8 byte);
+	static FIT_UINT16 Calc16(const volatile void *data, FIT_UINT32 size);
 };
-
 
 } // namespace fit
 

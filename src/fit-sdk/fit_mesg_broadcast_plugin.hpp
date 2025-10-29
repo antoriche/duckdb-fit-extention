@@ -9,23 +9,19 @@
 // Tag = production/release/21.171.0-0-g57fed75
 /////////////////////////////////////////////////////////////////////////////////////////////
 
-
-
 #if !defined(FIT_MESG_BROADCAST_PLUGIN_HPP)
 #define FIT_MESG_BROADCAST_PLUGIN_HPP
 
 #include "fit.hpp"
 #include "fit_mesg.hpp"
 
-namespace fit
-{
+namespace fit {
 
-class MesgBroadcastPlugin
-{
+class MesgBroadcastPlugin {
 public:
-    virtual ~MesgBroadcastPlugin() { /* Empty destructor */ };
-    virtual void OnBroadcast(std::vector<Mesg>& mesgs) = 0;
-    virtual void OnIncomingMesg(const Mesg& mesg) = 0;
+	virtual ~MesgBroadcastPlugin() {/* Empty destructor */};
+	virtual void OnBroadcast(std::vector<Mesg> &mesgs) = 0;
+	virtual void OnIncomingMesg(const Mesg &mesg) = 0;
 };
 
 } // namespace fit

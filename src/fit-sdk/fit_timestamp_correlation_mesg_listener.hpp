@@ -9,20 +9,18 @@
 // Tag = production/release/21.171.0-0-g57fed75
 /////////////////////////////////////////////////////////////////////////////////////////////
 
-
 #if !defined(FIT_TIMESTAMP_CORRELATION_MESG_LISTENER_HPP)
 #define FIT_TIMESTAMP_CORRELATION_MESG_LISTENER_HPP
 
 #include "fit_timestamp_correlation_mesg.hpp"
 
-namespace fit
-{
+namespace fit {
 
-class TimestampCorrelationMesgListener
-{
+class TimestampCorrelationMesgListener {
 public:
-    virtual ~TimestampCorrelationMesgListener() {}
-    virtual void OnMesg(TimestampCorrelationMesg& mesg) = 0;
+	virtual ~TimestampCorrelationMesgListener() {
+	}
+	virtual void OnMesg(TimestampCorrelationMesg &mesg) = 0;
 };
 
 } // namespace fit

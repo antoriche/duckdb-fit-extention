@@ -9,20 +9,18 @@
 // Tag = production/release/21.171.0-0-g57fed75
 /////////////////////////////////////////////////////////////////////////////////////////////
 
-
 #if !defined(FIT_HSA_RESPIRATION_DATA_MESG_LISTENER_HPP)
 #define FIT_HSA_RESPIRATION_DATA_MESG_LISTENER_HPP
 
 #include "fit_hsa_respiration_data_mesg.hpp"
 
-namespace fit
-{
+namespace fit {
 
-class HsaRespirationDataMesgListener
-{
+class HsaRespirationDataMesgListener {
 public:
-    virtual ~HsaRespirationDataMesgListener() {}
-    virtual void OnMesg(HsaRespirationDataMesg& mesg) = 0;
+	virtual ~HsaRespirationDataMesgListener() {
+	}
+	virtual void OnMesg(HsaRespirationDataMesg &mesg) = 0;
 };
 
 } // namespace fit

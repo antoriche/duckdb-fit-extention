@@ -9,20 +9,18 @@
 // Tag = production/release/21.171.0-0-g57fed75
 /////////////////////////////////////////////////////////////////////////////////////////////
 
-
 #if !defined(FIT_BIKE_PROFILE_MESG_LISTENER_HPP)
 #define FIT_BIKE_PROFILE_MESG_LISTENER_HPP
 
 #include "fit_bike_profile_mesg.hpp"
 
-namespace fit
-{
+namespace fit {
 
-class BikeProfileMesgListener
-{
+class BikeProfileMesgListener {
 public:
-    virtual ~BikeProfileMesgListener() {}
-    virtual void OnMesg(BikeProfileMesg& mesg) = 0;
+	virtual ~BikeProfileMesgListener() {
+	}
+	virtual void OnMesg(BikeProfileMesg &mesg) = 0;
 };
 
 } // namespace fit

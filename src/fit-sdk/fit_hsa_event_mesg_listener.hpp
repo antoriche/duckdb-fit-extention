@@ -9,20 +9,18 @@
 // Tag = production/release/21.171.0-0-g57fed75
 /////////////////////////////////////////////////////////////////////////////////////////////
 
-
 #if !defined(FIT_HSA_EVENT_MESG_LISTENER_HPP)
 #define FIT_HSA_EVENT_MESG_LISTENER_HPP
 
 #include "fit_hsa_event_mesg.hpp"
 
-namespace fit
-{
+namespace fit {
 
-class HsaEventMesgListener
-{
+class HsaEventMesgListener {
 public:
-    virtual ~HsaEventMesgListener() {}
-    virtual void OnMesg(HsaEventMesg& mesg) = 0;
+	virtual ~HsaEventMesgListener() {
+	}
+	virtual void OnMesg(HsaEventMesg &mesg) = 0;
 };
 
 } // namespace fit

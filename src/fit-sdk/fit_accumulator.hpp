@@ -9,27 +9,24 @@
 // Tag = production/release/21.171.0-0-g57fed75
 /////////////////////////////////////////////////////////////////////////////////////////////
 
-
 #if !defined(FIT_ACCUMULATOR_HPP)
 #define FIT_ACCUMULATOR_HPP
 
 #include <vector>
 #include "fit_accumulated_field.hpp"
 
-namespace fit
-{
+namespace fit {
 
-class Accumulator
-{
-   public:
-      FIT_UINT32 Accumulate(const FIT_UINT16 mesgNum, const FIT_UINT8 destFieldNum, const FIT_UINT32 value, const FIT_UINT8 bits);
-      void Set(const FIT_UINT16 mesgNum, const FIT_UINT8 destFieldNum, const FIT_UINT32 value );
+class Accumulator {
+public:
+	FIT_UINT32 Accumulate(const FIT_UINT16 mesgNum, const FIT_UINT8 destFieldNum, const FIT_UINT32 value,
+	                      const FIT_UINT8 bits);
+	void Set(const FIT_UINT16 mesgNum, const FIT_UINT8 destFieldNum, const FIT_UINT32 value);
 
-   private:
-      std::vector<AccumulatedField> fields;
+private:
+	std::vector<AccumulatedField> fields;
 };
 
 } // namespace fit
 
 #endif // defined(FIT_ACCUMULATOR_HPP)
-

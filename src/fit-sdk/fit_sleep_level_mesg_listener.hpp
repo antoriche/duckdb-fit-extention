@@ -9,20 +9,18 @@
 // Tag = production/release/21.171.0-0-g57fed75
 /////////////////////////////////////////////////////////////////////////////////////////////
 
-
 #if !defined(FIT_SLEEP_LEVEL_MESG_LISTENER_HPP)
 #define FIT_SLEEP_LEVEL_MESG_LISTENER_HPP
 
 #include "fit_sleep_level_mesg.hpp"
 
-namespace fit
-{
+namespace fit {
 
-class SleepLevelMesgListener
-{
+class SleepLevelMesgListener {
 public:
-    virtual ~SleepLevelMesgListener() {}
-    virtual void OnMesg(SleepLevelMesg& mesg) = 0;
+	virtual ~SleepLevelMesgListener() {
+	}
+	virtual void OnMesg(SleepLevelMesg &mesg) = 0;
 };
 
 } // namespace fit

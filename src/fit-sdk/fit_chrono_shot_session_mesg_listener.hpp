@@ -9,20 +9,18 @@
 // Tag = production/release/21.171.0-0-g57fed75
 /////////////////////////////////////////////////////////////////////////////////////////////
 
-
 #if !defined(FIT_CHRONO_SHOT_SESSION_MESG_LISTENER_HPP)
 #define FIT_CHRONO_SHOT_SESSION_MESG_LISTENER_HPP
 
 #include "fit_chrono_shot_session_mesg.hpp"
 
-namespace fit
-{
+namespace fit {
 
-class ChronoShotSessionMesgListener
-{
+class ChronoShotSessionMesgListener {
 public:
-    virtual ~ChronoShotSessionMesgListener() {}
-    virtual void OnMesg(ChronoShotSessionMesg& mesg) = 0;
+	virtual ~ChronoShotSessionMesgListener() {
+	}
+	virtual void OnMesg(ChronoShotSessionMesg &mesg) = 0;
 };
 
 } // namespace fit

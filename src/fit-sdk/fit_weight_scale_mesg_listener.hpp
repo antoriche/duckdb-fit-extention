@@ -9,20 +9,18 @@
 // Tag = production/release/21.171.0-0-g57fed75
 /////////////////////////////////////////////////////////////////////////////////////////////
 
-
 #if !defined(FIT_WEIGHT_SCALE_MESG_LISTENER_HPP)
 #define FIT_WEIGHT_SCALE_MESG_LISTENER_HPP
 
 #include "fit_weight_scale_mesg.hpp"
 
-namespace fit
-{
+namespace fit {
 
-class WeightScaleMesgListener
-{
+class WeightScaleMesgListener {
 public:
-    virtual ~WeightScaleMesgListener() {}
-    virtual void OnMesg(WeightScaleMesg& mesg) = 0;
+	virtual ~WeightScaleMesgListener() {
+	}
+	virtual void OnMesg(WeightScaleMesg &mesg) = 0;
 };
 
 } // namespace fit

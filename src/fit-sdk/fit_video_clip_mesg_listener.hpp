@@ -9,20 +9,18 @@
 // Tag = production/release/21.171.0-0-g57fed75
 /////////////////////////////////////////////////////////////////////////////////////////////
 
-
 #if !defined(FIT_VIDEO_CLIP_MESG_LISTENER_HPP)
 #define FIT_VIDEO_CLIP_MESG_LISTENER_HPP
 
 #include "fit_video_clip_mesg.hpp"
 
-namespace fit
-{
+namespace fit {
 
-class VideoClipMesgListener
-{
+class VideoClipMesgListener {
 public:
-    virtual ~VideoClipMesgListener() {}
-    virtual void OnMesg(VideoClipMesg& mesg) = 0;
+	virtual ~VideoClipMesgListener() {
+	}
+	virtual void OnMesg(VideoClipMesg &mesg) = 0;
 };
 
 } // namespace fit

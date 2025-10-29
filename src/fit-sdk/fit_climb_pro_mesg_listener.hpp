@@ -9,20 +9,18 @@
 // Tag = production/release/21.171.0-0-g57fed75
 /////////////////////////////////////////////////////////////////////////////////////////////
 
-
 #if !defined(FIT_CLIMB_PRO_MESG_LISTENER_HPP)
 #define FIT_CLIMB_PRO_MESG_LISTENER_HPP
 
 #include "fit_climb_pro_mesg.hpp"
 
-namespace fit
-{
+namespace fit {
 
-class ClimbProMesgListener
-{
+class ClimbProMesgListener {
 public:
-    virtual ~ClimbProMesgListener() {}
-    virtual void OnMesg(ClimbProMesg& mesg) = 0;
+	virtual ~ClimbProMesgListener() {
+	}
+	virtual void OnMesg(ClimbProMesg &mesg) = 0;
 };
 
 } // namespace fit

@@ -9,20 +9,18 @@
 // Tag = production/release/21.171.0-0-g57fed75
 /////////////////////////////////////////////////////////////////////////////////////////////
 
-
 #if !defined(FIT_TANK_SUMMARY_MESG_LISTENER_HPP)
 #define FIT_TANK_SUMMARY_MESG_LISTENER_HPP
 
 #include "fit_tank_summary_mesg.hpp"
 
-namespace fit
-{
+namespace fit {
 
-class TankSummaryMesgListener
-{
+class TankSummaryMesgListener {
 public:
-    virtual ~TankSummaryMesgListener() {}
-    virtual void OnMesg(TankSummaryMesg& mesg) = 0;
+	virtual ~TankSummaryMesgListener() {
+	}
+	virtual void OnMesg(TankSummaryMesg &mesg) = 0;
 };
 
 } // namespace fit

@@ -9,20 +9,18 @@
 // Tag = production/release/21.171.0-0-g57fed75
 /////////////////////////////////////////////////////////////////////////////////////////////
 
-
 #if !defined(FIT_OHR_SETTINGS_MESG_LISTENER_HPP)
 #define FIT_OHR_SETTINGS_MESG_LISTENER_HPP
 
 #include "fit_ohr_settings_mesg.hpp"
 
-namespace fit
-{
+namespace fit {
 
-class OhrSettingsMesgListener
-{
+class OhrSettingsMesgListener {
 public:
-    virtual ~OhrSettingsMesgListener() {}
-    virtual void OnMesg(OhrSettingsMesg& mesg) = 0;
+	virtual ~OhrSettingsMesgListener() {
+	}
+	virtual void OnMesg(OhrSettingsMesg &mesg) = 0;
 };
 
 } // namespace fit

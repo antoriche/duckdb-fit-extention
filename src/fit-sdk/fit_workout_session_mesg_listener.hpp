@@ -9,20 +9,18 @@
 // Tag = production/release/21.171.0-0-g57fed75
 /////////////////////////////////////////////////////////////////////////////////////////////
 
-
 #if !defined(FIT_WORKOUT_SESSION_MESG_LISTENER_HPP)
 #define FIT_WORKOUT_SESSION_MESG_LISTENER_HPP
 
 #include "fit_workout_session_mesg.hpp"
 
-namespace fit
-{
+namespace fit {
 
-class WorkoutSessionMesgListener
-{
+class WorkoutSessionMesgListener {
 public:
-    virtual ~WorkoutSessionMesgListener() {}
-    virtual void OnMesg(WorkoutSessionMesg& mesg) = 0;
+	virtual ~WorkoutSessionMesgListener() {
+	}
+	virtual void OnMesg(WorkoutSessionMesg &mesg) = 0;
 };
 
 } // namespace fit

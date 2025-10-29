@@ -9,20 +9,18 @@
 // Tag = production/release/21.171.0-0-g57fed75
 /////////////////////////////////////////////////////////////////////////////////////////////
 
-
 #if !defined(FIT_WATCHFACE_SETTINGS_MESG_LISTENER_HPP)
 #define FIT_WATCHFACE_SETTINGS_MESG_LISTENER_HPP
 
 #include "fit_watchface_settings_mesg.hpp"
 
-namespace fit
-{
+namespace fit {
 
-class WatchfaceSettingsMesgListener
-{
+class WatchfaceSettingsMesgListener {
 public:
-    virtual ~WatchfaceSettingsMesgListener() {}
-    virtual void OnMesg(WatchfaceSettingsMesg& mesg) = 0;
+	virtual ~WatchfaceSettingsMesgListener() {
+	}
+	virtual void OnMesg(WatchfaceSettingsMesg &mesg) = 0;
 };
 
 } // namespace fit

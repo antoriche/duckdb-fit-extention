@@ -9,20 +9,18 @@
 // Tag = production/release/21.171.0-0-g57fed75
 /////////////////////////////////////////////////////////////////////////////////////////////
 
-
 #if !defined(FIT_SPO2_DATA_MESG_LISTENER_HPP)
 #define FIT_SPO2_DATA_MESG_LISTENER_HPP
 
 #include "fit_spo2_data_mesg.hpp"
 
-namespace fit
-{
+namespace fit {
 
-class Spo2DataMesgListener
-{
+class Spo2DataMesgListener {
 public:
-    virtual ~Spo2DataMesgListener() {}
-    virtual void OnMesg(Spo2DataMesg& mesg) = 0;
+	virtual ~Spo2DataMesgListener() {
+	}
+	virtual void OnMesg(Spo2DataMesg &mesg) = 0;
 };
 
 } // namespace fit

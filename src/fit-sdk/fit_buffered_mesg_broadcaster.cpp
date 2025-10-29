@@ -9,44 +9,34 @@
 // Tag = production/release/21.171.0-0-g57fed75
 /////////////////////////////////////////////////////////////////////////////////////////////
 
-
-
 #include "fit_buffered_mesg_broadcaster.hpp"
 
+namespace fit {
 
-namespace fit
-{
-
-void BufferedMesgBroadcaster::RegisterMesgBroadcastPlugin(MesgBroadcastPlugin* plugin)
-{
-   plugins.push_back(plugin);
+void BufferedMesgBroadcaster::RegisterMesgBroadcastPlugin(MesgBroadcastPlugin *plugin) {
+	plugins.push_back(plugin);
 }
 
-void BufferedMesgBroadcaster::OnMesg(Mesg& mesg)
-{
-   mesgs.push_back(mesg);
+void BufferedMesgBroadcaster::OnMesg(Mesg &mesg) {
+	mesgs.push_back(mesg);
 
-   // Pass the message to each plugin. This gives the
-   // plugin a chance to peek the incoming messages
-   for(size_t i = 0; i < plugins.size(); i++)
-   {
-      if(plugins[i])
-         plugins[i]->OnIncomingMesg(mesg);
-   }
+	// Pass the message to each plugin. This gives the
+	// plugin a chance to peek the incoming messages
+	for (size_t i = 0; i < plugins.size(); i++) {
+		if (plugins[i])
+			plugins[i]->OnIncomingMesg(mesg);
+	}
 }
 
-void BufferedMesgBroadcaster::Broadcast(void)
-{
-   for(size_t i = 0; i < plugins.size(); i++)
-   {
-      if(plugins[i])
-         plugins[i]->OnBroadcast(mesgs);
-   }
+void BufferedMesgBroadcaster::Broadcast(void) {
+	for (size_t i = 0; i < plugins.size(); i++) {
+		if (plugins[i])
+			plugins[i]->OnBroadcast(mesgs);
+	}
 
-   for(size_t j = 0; j < mesgs.size(); j++)
-   {
-      MesgBroadcaster::OnMesg(mesgs[j]);
-   }
+	for (size_t j = 0; j < mesgs.size(); j++) {
+		MesgBroadcaster::OnMesg(mesgs[j]);
+	}
 }
 
 } // namespace fit

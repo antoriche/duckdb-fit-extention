@@ -9,20 +9,18 @@
 // Tag = production/release/21.171.0-0-g57fed75
 /////////////////////////////////////////////////////////////////////////////////////////////
 
-
 #if !defined(FIT_HSA_SPO2_DATA_MESG_LISTENER_HPP)
 #define FIT_HSA_SPO2_DATA_MESG_LISTENER_HPP
 
 #include "fit_hsa_spo2_data_mesg.hpp"
 
-namespace fit
-{
+namespace fit {
 
-class HsaSpo2DataMesgListener
-{
+class HsaSpo2DataMesgListener {
 public:
-    virtual ~HsaSpo2DataMesgListener() {}
-    virtual void OnMesg(HsaSpo2DataMesg& mesg) = 0;
+	virtual ~HsaSpo2DataMesgListener() {
+	}
+	virtual void OnMesg(HsaSpo2DataMesg &mesg) = 0;
 };
 
 } // namespace fit

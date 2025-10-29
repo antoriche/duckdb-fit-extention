@@ -9,20 +9,18 @@
 // Tag = production/release/21.171.0-0-g57fed75
 /////////////////////////////////////////////////////////////////////////////////////////////
 
-
 #if !defined(FIT_HSA_WRIST_TEMPERATURE_DATA_MESG_LISTENER_HPP)
 #define FIT_HSA_WRIST_TEMPERATURE_DATA_MESG_LISTENER_HPP
 
 #include "fit_hsa_wrist_temperature_data_mesg.hpp"
 
-namespace fit
-{
+namespace fit {
 
-class HsaWristTemperatureDataMesgListener
-{
+class HsaWristTemperatureDataMesgListener {
 public:
-    virtual ~HsaWristTemperatureDataMesgListener() {}
-    virtual void OnMesg(HsaWristTemperatureDataMesg& mesg) = 0;
+	virtual ~HsaWristTemperatureDataMesgListener() {
+	}
+	virtual void OnMesg(HsaWristTemperatureDataMesg &mesg) = 0;
 };
 
 } // namespace fit

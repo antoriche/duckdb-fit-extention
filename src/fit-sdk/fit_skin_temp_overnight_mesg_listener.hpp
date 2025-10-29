@@ -9,20 +9,18 @@
 // Tag = production/release/21.171.0-0-g57fed75
 /////////////////////////////////////////////////////////////////////////////////////////////
 
-
 #if !defined(FIT_SKIN_TEMP_OVERNIGHT_MESG_LISTENER_HPP)
 #define FIT_SKIN_TEMP_OVERNIGHT_MESG_LISTENER_HPP
 
 #include "fit_skin_temp_overnight_mesg.hpp"
 
-namespace fit
-{
+namespace fit {
 
-class SkinTempOvernightMesgListener
-{
+class SkinTempOvernightMesgListener {
 public:
-    virtual ~SkinTempOvernightMesgListener() {}
-    virtual void OnMesg(SkinTempOvernightMesg& mesg) = 0;
+	virtual ~SkinTempOvernightMesgListener() {
+	}
+	virtual void OnMesg(SkinTempOvernightMesg &mesg) = 0;
 };
 
 } // namespace fit

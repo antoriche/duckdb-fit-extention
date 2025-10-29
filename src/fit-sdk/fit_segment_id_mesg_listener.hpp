@@ -9,20 +9,18 @@
 // Tag = production/release/21.171.0-0-g57fed75
 /////////////////////////////////////////////////////////////////////////////////////////////
 
-
 #if !defined(FIT_SEGMENT_ID_MESG_LISTENER_HPP)
 #define FIT_SEGMENT_ID_MESG_LISTENER_HPP
 
 #include "fit_segment_id_mesg.hpp"
 
-namespace fit
-{
+namespace fit {
 
-class SegmentIdMesgListener
-{
+class SegmentIdMesgListener {
 public:
-    virtual ~SegmentIdMesgListener() {}
-    virtual void OnMesg(SegmentIdMesg& mesg) = 0;
+	virtual ~SegmentIdMesgListener() {
+	}
+	virtual void OnMesg(SegmentIdMesg &mesg) = 0;
 };
 
 } // namespace fit

@@ -9,20 +9,18 @@
 // Tag = production/release/21.171.0-0-g57fed75
 /////////////////////////////////////////////////////////////////////////////////////////////
 
-
 #if !defined(FIT_BEAT_INTERVALS_MESG_LISTENER_HPP)
 #define FIT_BEAT_INTERVALS_MESG_LISTENER_HPP
 
 #include "fit_beat_intervals_mesg.hpp"
 
-namespace fit
-{
+namespace fit {
 
-class BeatIntervalsMesgListener
-{
+class BeatIntervalsMesgListener {
 public:
-    virtual ~BeatIntervalsMesgListener() {}
-    virtual void OnMesg(BeatIntervalsMesg& mesg) = 0;
+	virtual ~BeatIntervalsMesgListener() {
+	}
+	virtual void OnMesg(BeatIntervalsMesg &mesg) = 0;
 };
 
 } // namespace fit

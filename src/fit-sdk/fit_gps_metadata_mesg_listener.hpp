@@ -9,20 +9,18 @@
 // Tag = production/release/21.171.0-0-g57fed75
 /////////////////////////////////////////////////////////////////////////////////////////////
 
-
 #if !defined(FIT_GPS_METADATA_MESG_LISTENER_HPP)
 #define FIT_GPS_METADATA_MESG_LISTENER_HPP
 
 #include "fit_gps_metadata_mesg.hpp"
 
-namespace fit
-{
+namespace fit {
 
-class GpsMetadataMesgListener
-{
+class GpsMetadataMesgListener {
 public:
-    virtual ~GpsMetadataMesgListener() {}
-    virtual void OnMesg(GpsMetadataMesg& mesg) = 0;
+	virtual ~GpsMetadataMesgListener() {
+	}
+	virtual void OnMesg(GpsMetadataMesg &mesg) = 0;
 };
 
 } // namespace fit

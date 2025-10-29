@@ -9,20 +9,18 @@
 // Tag = production/release/21.171.0-0-g57fed75
 /////////////////////////////////////////////////////////////////////////////////////////////
 
-
 #if !defined(FIT_MONITORING_HR_DATA_MESG_LISTENER_HPP)
 #define FIT_MONITORING_HR_DATA_MESG_LISTENER_HPP
 
 #include "fit_monitoring_hr_data_mesg.hpp"
 
-namespace fit
-{
+namespace fit {
 
-class MonitoringHrDataMesgListener
-{
+class MonitoringHrDataMesgListener {
 public:
-    virtual ~MonitoringHrDataMesgListener() {}
-    virtual void OnMesg(MonitoringHrDataMesg& mesg) = 0;
+	virtual ~MonitoringHrDataMesgListener() {
+	}
+	virtual void OnMesg(MonitoringHrDataMesg &mesg) = 0;
 };
 
 } // namespace fit

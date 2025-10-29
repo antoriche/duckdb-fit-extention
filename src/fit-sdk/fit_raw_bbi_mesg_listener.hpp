@@ -9,20 +9,18 @@
 // Tag = production/release/21.171.0-0-g57fed75
 /////////////////////////////////////////////////////////////////////////////////////////////
 
-
 #if !defined(FIT_RAW_BBI_MESG_LISTENER_HPP)
 #define FIT_RAW_BBI_MESG_LISTENER_HPP
 
 #include "fit_raw_bbi_mesg.hpp"
 
-namespace fit
-{
+namespace fit {
 
-class RawBbiMesgListener
-{
+class RawBbiMesgListener {
 public:
-    virtual ~RawBbiMesgListener() {}
-    virtual void OnMesg(RawBbiMesg& mesg) = 0;
+	virtual ~RawBbiMesgListener() {
+	}
+	virtual void OnMesg(RawBbiMesg &mesg) = 0;
 };
 
 } // namespace fit

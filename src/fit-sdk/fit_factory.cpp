@@ -9,7 +9,6 @@
 // Tag = production/release/21.171.0-0-g57fed75
 /////////////////////////////////////////////////////////////////////////////////////////////
 
-
 #include "fit_factory.hpp"
 #include "fit_file_id_mesg.hpp"
 #include "fit_file_creator_mesg.hpp"
@@ -133,383 +132,378 @@
 #include "fit_skin_temp_overnight_mesg.hpp"
 #include "fit_pad_mesg.hpp"
 
-namespace fit
-{
+namespace fit {
 
-Mesg Factory::CreateMesg(Mesg mesg)
-{
-    switch (mesg.GetNum())
-    {
-        
-        case FIT_MESG_NUM_FILE_ID:
-            return FileIdMesg(mesg);
-        
-        case FIT_MESG_NUM_FILE_CREATOR:
-            return FileCreatorMesg(mesg);
-        
-        case FIT_MESG_NUM_TIMESTAMP_CORRELATION:
-            return TimestampCorrelationMesg(mesg);
-        
-        case FIT_MESG_NUM_SOFTWARE:
-            return SoftwareMesg(mesg);
-        
-        case FIT_MESG_NUM_SLAVE_DEVICE:
-            return SlaveDeviceMesg(mesg);
-        
-        case FIT_MESG_NUM_CAPABILITIES:
-            return CapabilitiesMesg(mesg);
-        
-        case FIT_MESG_NUM_FILE_CAPABILITIES:
-            return FileCapabilitiesMesg(mesg);
-        
-        case FIT_MESG_NUM_MESG_CAPABILITIES:
-            return MesgCapabilitiesMesg(mesg);
-        
-        case FIT_MESG_NUM_FIELD_CAPABILITIES:
-            return FieldCapabilitiesMesg(mesg);
-        
-        case FIT_MESG_NUM_DEVICE_SETTINGS:
-            return DeviceSettingsMesg(mesg);
-        
-        case FIT_MESG_NUM_USER_PROFILE:
-            return UserProfileMesg(mesg);
-        
-        case FIT_MESG_NUM_HRM_PROFILE:
-            return HrmProfileMesg(mesg);
-        
-        case FIT_MESG_NUM_SDM_PROFILE:
-            return SdmProfileMesg(mesg);
-        
-        case FIT_MESG_NUM_BIKE_PROFILE:
-            return BikeProfileMesg(mesg);
-        
-        case FIT_MESG_NUM_CONNECTIVITY:
-            return ConnectivityMesg(mesg);
-        
-        case FIT_MESG_NUM_WATCHFACE_SETTINGS:
-            return WatchfaceSettingsMesg(mesg);
-        
-        case FIT_MESG_NUM_OHR_SETTINGS:
-            return OhrSettingsMesg(mesg);
-        
-        case FIT_MESG_NUM_TIME_IN_ZONE:
-            return TimeInZoneMesg(mesg);
-        
-        case FIT_MESG_NUM_ZONES_TARGET:
-            return ZonesTargetMesg(mesg);
-        
-        case FIT_MESG_NUM_SPORT:
-            return SportMesg(mesg);
-        
-        case FIT_MESG_NUM_HR_ZONE:
-            return HrZoneMesg(mesg);
-        
-        case FIT_MESG_NUM_SPEED_ZONE:
-            return SpeedZoneMesg(mesg);
-        
-        case FIT_MESG_NUM_CADENCE_ZONE:
-            return CadenceZoneMesg(mesg);
-        
-        case FIT_MESG_NUM_POWER_ZONE:
-            return PowerZoneMesg(mesg);
-        
-        case FIT_MESG_NUM_MET_ZONE:
-            return MetZoneMesg(mesg);
-        
-        case FIT_MESG_NUM_TRAINING_SETTINGS:
-            return TrainingSettingsMesg(mesg);
-        
-        case FIT_MESG_NUM_DIVE_SETTINGS:
-            return DiveSettingsMesg(mesg);
-        
-        case FIT_MESG_NUM_DIVE_ALARM:
-            return DiveAlarmMesg(mesg);
-        
-        case FIT_MESG_NUM_DIVE_APNEA_ALARM:
-            return DiveApneaAlarmMesg(mesg);
-        
-        case FIT_MESG_NUM_DIVE_GAS:
-            return DiveGasMesg(mesg);
-        
-        case FIT_MESG_NUM_GOAL:
-            return GoalMesg(mesg);
-        
-        case FIT_MESG_NUM_ACTIVITY:
-            return ActivityMesg(mesg);
-        
-        case FIT_MESG_NUM_SESSION:
-            return SessionMesg(mesg);
-        
-        case FIT_MESG_NUM_LAP:
-            return LapMesg(mesg);
-        
-        case FIT_MESG_NUM_LENGTH:
-            return LengthMesg(mesg);
-        
-        case FIT_MESG_NUM_RECORD:
-            return RecordMesg(mesg);
-        
-        case FIT_MESG_NUM_EVENT:
-            return EventMesg(mesg);
-        
-        case FIT_MESG_NUM_DEVICE_INFO:
-            return DeviceInfoMesg(mesg);
-        
-        case FIT_MESG_NUM_DEVICE_AUX_BATTERY_INFO:
-            return DeviceAuxBatteryInfoMesg(mesg);
-        
-        case FIT_MESG_NUM_TRAINING_FILE:
-            return TrainingFileMesg(mesg);
-        
-        case FIT_MESG_NUM_WEATHER_CONDITIONS:
-            return WeatherConditionsMesg(mesg);
-        
-        case FIT_MESG_NUM_WEATHER_ALERT:
-            return WeatherAlertMesg(mesg);
-        
-        case FIT_MESG_NUM_GPS_METADATA:
-            return GpsMetadataMesg(mesg);
-        
-        case FIT_MESG_NUM_CAMERA_EVENT:
-            return CameraEventMesg(mesg);
-        
-        case FIT_MESG_NUM_GYROSCOPE_DATA:
-            return GyroscopeDataMesg(mesg);
-        
-        case FIT_MESG_NUM_ACCELEROMETER_DATA:
-            return AccelerometerDataMesg(mesg);
-        
-        case FIT_MESG_NUM_MAGNETOMETER_DATA:
-            return MagnetometerDataMesg(mesg);
-        
-        case FIT_MESG_NUM_BAROMETER_DATA:
-            return BarometerDataMesg(mesg);
-        
-        case FIT_MESG_NUM_THREE_D_SENSOR_CALIBRATION:
-            return ThreeDSensorCalibrationMesg(mesg);
-        
-        case FIT_MESG_NUM_ONE_D_SENSOR_CALIBRATION:
-            return OneDSensorCalibrationMesg(mesg);
-        
-        case FIT_MESG_NUM_VIDEO_FRAME:
-            return VideoFrameMesg(mesg);
-        
-        case FIT_MESG_NUM_OBDII_DATA:
-            return ObdiiDataMesg(mesg);
-        
-        case FIT_MESG_NUM_NMEA_SENTENCE:
-            return NmeaSentenceMesg(mesg);
-        
-        case FIT_MESG_NUM_AVIATION_ATTITUDE:
-            return AviationAttitudeMesg(mesg);
-        
-        case FIT_MESG_NUM_VIDEO:
-            return VideoMesg(mesg);
-        
-        case FIT_MESG_NUM_VIDEO_TITLE:
-            return VideoTitleMesg(mesg);
-        
-        case FIT_MESG_NUM_VIDEO_DESCRIPTION:
-            return VideoDescriptionMesg(mesg);
-        
-        case FIT_MESG_NUM_VIDEO_CLIP:
-            return VideoClipMesg(mesg);
-        
-        case FIT_MESG_NUM_SET:
-            return SetMesg(mesg);
-        
-        case FIT_MESG_NUM_JUMP:
-            return JumpMesg(mesg);
-        
-        case FIT_MESG_NUM_SPLIT:
-            return SplitMesg(mesg);
-        
-        case FIT_MESG_NUM_SPLIT_SUMMARY:
-            return SplitSummaryMesg(mesg);
-        
-        case FIT_MESG_NUM_CLIMB_PRO:
-            return ClimbProMesg(mesg);
-        
-        case FIT_MESG_NUM_FIELD_DESCRIPTION:
-            return FieldDescriptionMesg(mesg);
-        
-        case FIT_MESG_NUM_DEVELOPER_DATA_ID:
-            return DeveloperDataIdMesg(mesg);
-        
-        case FIT_MESG_NUM_COURSE:
-            return CourseMesg(mesg);
-        
-        case FIT_MESG_NUM_COURSE_POINT:
-            return CoursePointMesg(mesg);
-        
-        case FIT_MESG_NUM_SEGMENT_ID:
-            return SegmentIdMesg(mesg);
-        
-        case FIT_MESG_NUM_SEGMENT_LEADERBOARD_ENTRY:
-            return SegmentLeaderboardEntryMesg(mesg);
-        
-        case FIT_MESG_NUM_SEGMENT_POINT:
-            return SegmentPointMesg(mesg);
-        
-        case FIT_MESG_NUM_SEGMENT_LAP:
-            return SegmentLapMesg(mesg);
-        
-        case FIT_MESG_NUM_SEGMENT_FILE:
-            return SegmentFileMesg(mesg);
-        
-        case FIT_MESG_NUM_WORKOUT:
-            return WorkoutMesg(mesg);
-        
-        case FIT_MESG_NUM_WORKOUT_SESSION:
-            return WorkoutSessionMesg(mesg);
-        
-        case FIT_MESG_NUM_WORKOUT_STEP:
-            return WorkoutStepMesg(mesg);
-        
-        case FIT_MESG_NUM_EXERCISE_TITLE:
-            return ExerciseTitleMesg(mesg);
-        
-        case FIT_MESG_NUM_SCHEDULE:
-            return ScheduleMesg(mesg);
-        
-        case FIT_MESG_NUM_TOTALS:
-            return TotalsMesg(mesg);
-        
-        case FIT_MESG_NUM_WEIGHT_SCALE:
-            return WeightScaleMesg(mesg);
-        
-        case FIT_MESG_NUM_BLOOD_PRESSURE:
-            return BloodPressureMesg(mesg);
-        
-        case FIT_MESG_NUM_MONITORING_INFO:
-            return MonitoringInfoMesg(mesg);
-        
-        case FIT_MESG_NUM_MONITORING:
-            return MonitoringMesg(mesg);
-        
-        case FIT_MESG_NUM_MONITORING_HR_DATA:
-            return MonitoringHrDataMesg(mesg);
-        
-        case FIT_MESG_NUM_SPO2_DATA:
-            return Spo2DataMesg(mesg);
-        
-        case FIT_MESG_NUM_HR:
-            return HrMesg(mesg);
-        
-        case FIT_MESG_NUM_STRESS_LEVEL:
-            return StressLevelMesg(mesg);
-        
-        case FIT_MESG_NUM_MAX_MET_DATA:
-            return MaxMetDataMesg(mesg);
-        
-        case FIT_MESG_NUM_HSA_BODY_BATTERY_DATA:
-            return HsaBodyBatteryDataMesg(mesg);
-        
-        case FIT_MESG_NUM_HSA_EVENT:
-            return HsaEventMesg(mesg);
-        
-        case FIT_MESG_NUM_HSA_ACCELEROMETER_DATA:
-            return HsaAccelerometerDataMesg(mesg);
-        
-        case FIT_MESG_NUM_HSA_GYROSCOPE_DATA:
-            return HsaGyroscopeDataMesg(mesg);
-        
-        case FIT_MESG_NUM_HSA_STEP_DATA:
-            return HsaStepDataMesg(mesg);
-        
-        case FIT_MESG_NUM_HSA_SPO2_DATA:
-            return HsaSpo2DataMesg(mesg);
-        
-        case FIT_MESG_NUM_HSA_STRESS_DATA:
-            return HsaStressDataMesg(mesg);
-        
-        case FIT_MESG_NUM_HSA_RESPIRATION_DATA:
-            return HsaRespirationDataMesg(mesg);
-        
-        case FIT_MESG_NUM_HSA_HEART_RATE_DATA:
-            return HsaHeartRateDataMesg(mesg);
-        
-        case FIT_MESG_NUM_HSA_CONFIGURATION_DATA:
-            return HsaConfigurationDataMesg(mesg);
-        
-        case FIT_MESG_NUM_HSA_WRIST_TEMPERATURE_DATA:
-            return HsaWristTemperatureDataMesg(mesg);
-        
-        case FIT_MESG_NUM_MEMO_GLOB:
-            return MemoGlobMesg(mesg);
-        
-        case FIT_MESG_NUM_SLEEP_LEVEL:
-            return SleepLevelMesg(mesg);
-        
-        case FIT_MESG_NUM_ANT_CHANNEL_ID:
-            return AntChannelIdMesg(mesg);
-        
-        case FIT_MESG_NUM_ANT_RX:
-            return AntRxMesg(mesg);
-        
-        case FIT_MESG_NUM_ANT_TX:
-            return AntTxMesg(mesg);
-        
-        case FIT_MESG_NUM_EXD_SCREEN_CONFIGURATION:
-            return ExdScreenConfigurationMesg(mesg);
-        
-        case FIT_MESG_NUM_EXD_DATA_FIELD_CONFIGURATION:
-            return ExdDataFieldConfigurationMesg(mesg);
-        
-        case FIT_MESG_NUM_EXD_DATA_CONCEPT_CONFIGURATION:
-            return ExdDataConceptConfigurationMesg(mesg);
-        
-        case FIT_MESG_NUM_DIVE_SUMMARY:
-            return DiveSummaryMesg(mesg);
-        
-        case FIT_MESG_NUM_AAD_ACCEL_FEATURES:
-            return AadAccelFeaturesMesg(mesg);
-        
-        case FIT_MESG_NUM_HRV:
-            return HrvMesg(mesg);
-        
-        case FIT_MESG_NUM_BEAT_INTERVALS:
-            return BeatIntervalsMesg(mesg);
-        
-        case FIT_MESG_NUM_HRV_STATUS_SUMMARY:
-            return HrvStatusSummaryMesg(mesg);
-        
-        case FIT_MESG_NUM_HRV_VALUE:
-            return HrvValueMesg(mesg);
-        
-        case FIT_MESG_NUM_RAW_BBI:
-            return RawBbiMesg(mesg);
-        
-        case FIT_MESG_NUM_RESPIRATION_RATE:
-            return RespirationRateMesg(mesg);
-        
-        case FIT_MESG_NUM_CHRONO_SHOT_SESSION:
-            return ChronoShotSessionMesg(mesg);
-        
-        case FIT_MESG_NUM_CHRONO_SHOT_DATA:
-            return ChronoShotDataMesg(mesg);
-        
-        case FIT_MESG_NUM_TANK_UPDATE:
-            return TankUpdateMesg(mesg);
-        
-        case FIT_MESG_NUM_TANK_SUMMARY:
-            return TankSummaryMesg(mesg);
-        
-        case FIT_MESG_NUM_SLEEP_ASSESSMENT:
-            return SleepAssessmentMesg(mesg);
-        
-        case FIT_MESG_NUM_SKIN_TEMP_OVERNIGHT:
-            return SkinTempOvernightMesg(mesg);
-        
-        case FIT_MESG_NUM_PAD:
-            return PadMesg(mesg);
-        
-        default:
-        break;
-    }
-    return mesg;
+Mesg Factory::CreateMesg(Mesg mesg) {
+	switch (mesg.GetNum()) {
+
+	case FIT_MESG_NUM_FILE_ID:
+		return FileIdMesg(mesg);
+
+	case FIT_MESG_NUM_FILE_CREATOR:
+		return FileCreatorMesg(mesg);
+
+	case FIT_MESG_NUM_TIMESTAMP_CORRELATION:
+		return TimestampCorrelationMesg(mesg);
+
+	case FIT_MESG_NUM_SOFTWARE:
+		return SoftwareMesg(mesg);
+
+	case FIT_MESG_NUM_SLAVE_DEVICE:
+		return SlaveDeviceMesg(mesg);
+
+	case FIT_MESG_NUM_CAPABILITIES:
+		return CapabilitiesMesg(mesg);
+
+	case FIT_MESG_NUM_FILE_CAPABILITIES:
+		return FileCapabilitiesMesg(mesg);
+
+	case FIT_MESG_NUM_MESG_CAPABILITIES:
+		return MesgCapabilitiesMesg(mesg);
+
+	case FIT_MESG_NUM_FIELD_CAPABILITIES:
+		return FieldCapabilitiesMesg(mesg);
+
+	case FIT_MESG_NUM_DEVICE_SETTINGS:
+		return DeviceSettingsMesg(mesg);
+
+	case FIT_MESG_NUM_USER_PROFILE:
+		return UserProfileMesg(mesg);
+
+	case FIT_MESG_NUM_HRM_PROFILE:
+		return HrmProfileMesg(mesg);
+
+	case FIT_MESG_NUM_SDM_PROFILE:
+		return SdmProfileMesg(mesg);
+
+	case FIT_MESG_NUM_BIKE_PROFILE:
+		return BikeProfileMesg(mesg);
+
+	case FIT_MESG_NUM_CONNECTIVITY:
+		return ConnectivityMesg(mesg);
+
+	case FIT_MESG_NUM_WATCHFACE_SETTINGS:
+		return WatchfaceSettingsMesg(mesg);
+
+	case FIT_MESG_NUM_OHR_SETTINGS:
+		return OhrSettingsMesg(mesg);
+
+	case FIT_MESG_NUM_TIME_IN_ZONE:
+		return TimeInZoneMesg(mesg);
+
+	case FIT_MESG_NUM_ZONES_TARGET:
+		return ZonesTargetMesg(mesg);
+
+	case FIT_MESG_NUM_SPORT:
+		return SportMesg(mesg);
+
+	case FIT_MESG_NUM_HR_ZONE:
+		return HrZoneMesg(mesg);
+
+	case FIT_MESG_NUM_SPEED_ZONE:
+		return SpeedZoneMesg(mesg);
+
+	case FIT_MESG_NUM_CADENCE_ZONE:
+		return CadenceZoneMesg(mesg);
+
+	case FIT_MESG_NUM_POWER_ZONE:
+		return PowerZoneMesg(mesg);
+
+	case FIT_MESG_NUM_MET_ZONE:
+		return MetZoneMesg(mesg);
+
+	case FIT_MESG_NUM_TRAINING_SETTINGS:
+		return TrainingSettingsMesg(mesg);
+
+	case FIT_MESG_NUM_DIVE_SETTINGS:
+		return DiveSettingsMesg(mesg);
+
+	case FIT_MESG_NUM_DIVE_ALARM:
+		return DiveAlarmMesg(mesg);
+
+	case FIT_MESG_NUM_DIVE_APNEA_ALARM:
+		return DiveApneaAlarmMesg(mesg);
+
+	case FIT_MESG_NUM_DIVE_GAS:
+		return DiveGasMesg(mesg);
+
+	case FIT_MESG_NUM_GOAL:
+		return GoalMesg(mesg);
+
+	case FIT_MESG_NUM_ACTIVITY:
+		return ActivityMesg(mesg);
+
+	case FIT_MESG_NUM_SESSION:
+		return SessionMesg(mesg);
+
+	case FIT_MESG_NUM_LAP:
+		return LapMesg(mesg);
+
+	case FIT_MESG_NUM_LENGTH:
+		return LengthMesg(mesg);
+
+	case FIT_MESG_NUM_RECORD:
+		return RecordMesg(mesg);
+
+	case FIT_MESG_NUM_EVENT:
+		return EventMesg(mesg);
+
+	case FIT_MESG_NUM_DEVICE_INFO:
+		return DeviceInfoMesg(mesg);
+
+	case FIT_MESG_NUM_DEVICE_AUX_BATTERY_INFO:
+		return DeviceAuxBatteryInfoMesg(mesg);
+
+	case FIT_MESG_NUM_TRAINING_FILE:
+		return TrainingFileMesg(mesg);
+
+	case FIT_MESG_NUM_WEATHER_CONDITIONS:
+		return WeatherConditionsMesg(mesg);
+
+	case FIT_MESG_NUM_WEATHER_ALERT:
+		return WeatherAlertMesg(mesg);
+
+	case FIT_MESG_NUM_GPS_METADATA:
+		return GpsMetadataMesg(mesg);
+
+	case FIT_MESG_NUM_CAMERA_EVENT:
+		return CameraEventMesg(mesg);
+
+	case FIT_MESG_NUM_GYROSCOPE_DATA:
+		return GyroscopeDataMesg(mesg);
+
+	case FIT_MESG_NUM_ACCELEROMETER_DATA:
+		return AccelerometerDataMesg(mesg);
+
+	case FIT_MESG_NUM_MAGNETOMETER_DATA:
+		return MagnetometerDataMesg(mesg);
+
+	case FIT_MESG_NUM_BAROMETER_DATA:
+		return BarometerDataMesg(mesg);
+
+	case FIT_MESG_NUM_THREE_D_SENSOR_CALIBRATION:
+		return ThreeDSensorCalibrationMesg(mesg);
+
+	case FIT_MESG_NUM_ONE_D_SENSOR_CALIBRATION:
+		return OneDSensorCalibrationMesg(mesg);
+
+	case FIT_MESG_NUM_VIDEO_FRAME:
+		return VideoFrameMesg(mesg);
+
+	case FIT_MESG_NUM_OBDII_DATA:
+		return ObdiiDataMesg(mesg);
+
+	case FIT_MESG_NUM_NMEA_SENTENCE:
+		return NmeaSentenceMesg(mesg);
+
+	case FIT_MESG_NUM_AVIATION_ATTITUDE:
+		return AviationAttitudeMesg(mesg);
+
+	case FIT_MESG_NUM_VIDEO:
+		return VideoMesg(mesg);
+
+	case FIT_MESG_NUM_VIDEO_TITLE:
+		return VideoTitleMesg(mesg);
+
+	case FIT_MESG_NUM_VIDEO_DESCRIPTION:
+		return VideoDescriptionMesg(mesg);
+
+	case FIT_MESG_NUM_VIDEO_CLIP:
+		return VideoClipMesg(mesg);
+
+	case FIT_MESG_NUM_SET:
+		return SetMesg(mesg);
+
+	case FIT_MESG_NUM_JUMP:
+		return JumpMesg(mesg);
+
+	case FIT_MESG_NUM_SPLIT:
+		return SplitMesg(mesg);
+
+	case FIT_MESG_NUM_SPLIT_SUMMARY:
+		return SplitSummaryMesg(mesg);
+
+	case FIT_MESG_NUM_CLIMB_PRO:
+		return ClimbProMesg(mesg);
+
+	case FIT_MESG_NUM_FIELD_DESCRIPTION:
+		return FieldDescriptionMesg(mesg);
+
+	case FIT_MESG_NUM_DEVELOPER_DATA_ID:
+		return DeveloperDataIdMesg(mesg);
+
+	case FIT_MESG_NUM_COURSE:
+		return CourseMesg(mesg);
+
+	case FIT_MESG_NUM_COURSE_POINT:
+		return CoursePointMesg(mesg);
+
+	case FIT_MESG_NUM_SEGMENT_ID:
+		return SegmentIdMesg(mesg);
+
+	case FIT_MESG_NUM_SEGMENT_LEADERBOARD_ENTRY:
+		return SegmentLeaderboardEntryMesg(mesg);
+
+	case FIT_MESG_NUM_SEGMENT_POINT:
+		return SegmentPointMesg(mesg);
+
+	case FIT_MESG_NUM_SEGMENT_LAP:
+		return SegmentLapMesg(mesg);
+
+	case FIT_MESG_NUM_SEGMENT_FILE:
+		return SegmentFileMesg(mesg);
+
+	case FIT_MESG_NUM_WORKOUT:
+		return WorkoutMesg(mesg);
+
+	case FIT_MESG_NUM_WORKOUT_SESSION:
+		return WorkoutSessionMesg(mesg);
+
+	case FIT_MESG_NUM_WORKOUT_STEP:
+		return WorkoutStepMesg(mesg);
+
+	case FIT_MESG_NUM_EXERCISE_TITLE:
+		return ExerciseTitleMesg(mesg);
+
+	case FIT_MESG_NUM_SCHEDULE:
+		return ScheduleMesg(mesg);
+
+	case FIT_MESG_NUM_TOTALS:
+		return TotalsMesg(mesg);
+
+	case FIT_MESG_NUM_WEIGHT_SCALE:
+		return WeightScaleMesg(mesg);
+
+	case FIT_MESG_NUM_BLOOD_PRESSURE:
+		return BloodPressureMesg(mesg);
+
+	case FIT_MESG_NUM_MONITORING_INFO:
+		return MonitoringInfoMesg(mesg);
+
+	case FIT_MESG_NUM_MONITORING:
+		return MonitoringMesg(mesg);
+
+	case FIT_MESG_NUM_MONITORING_HR_DATA:
+		return MonitoringHrDataMesg(mesg);
+
+	case FIT_MESG_NUM_SPO2_DATA:
+		return Spo2DataMesg(mesg);
+
+	case FIT_MESG_NUM_HR:
+		return HrMesg(mesg);
+
+	case FIT_MESG_NUM_STRESS_LEVEL:
+		return StressLevelMesg(mesg);
+
+	case FIT_MESG_NUM_MAX_MET_DATA:
+		return MaxMetDataMesg(mesg);
+
+	case FIT_MESG_NUM_HSA_BODY_BATTERY_DATA:
+		return HsaBodyBatteryDataMesg(mesg);
+
+	case FIT_MESG_NUM_HSA_EVENT:
+		return HsaEventMesg(mesg);
+
+	case FIT_MESG_NUM_HSA_ACCELEROMETER_DATA:
+		return HsaAccelerometerDataMesg(mesg);
+
+	case FIT_MESG_NUM_HSA_GYROSCOPE_DATA:
+		return HsaGyroscopeDataMesg(mesg);
+
+	case FIT_MESG_NUM_HSA_STEP_DATA:
+		return HsaStepDataMesg(mesg);
+
+	case FIT_MESG_NUM_HSA_SPO2_DATA:
+		return HsaSpo2DataMesg(mesg);
+
+	case FIT_MESG_NUM_HSA_STRESS_DATA:
+		return HsaStressDataMesg(mesg);
+
+	case FIT_MESG_NUM_HSA_RESPIRATION_DATA:
+		return HsaRespirationDataMesg(mesg);
+
+	case FIT_MESG_NUM_HSA_HEART_RATE_DATA:
+		return HsaHeartRateDataMesg(mesg);
+
+	case FIT_MESG_NUM_HSA_CONFIGURATION_DATA:
+		return HsaConfigurationDataMesg(mesg);
+
+	case FIT_MESG_NUM_HSA_WRIST_TEMPERATURE_DATA:
+		return HsaWristTemperatureDataMesg(mesg);
+
+	case FIT_MESG_NUM_MEMO_GLOB:
+		return MemoGlobMesg(mesg);
+
+	case FIT_MESG_NUM_SLEEP_LEVEL:
+		return SleepLevelMesg(mesg);
+
+	case FIT_MESG_NUM_ANT_CHANNEL_ID:
+		return AntChannelIdMesg(mesg);
+
+	case FIT_MESG_NUM_ANT_RX:
+		return AntRxMesg(mesg);
+
+	case FIT_MESG_NUM_ANT_TX:
+		return AntTxMesg(mesg);
+
+	case FIT_MESG_NUM_EXD_SCREEN_CONFIGURATION:
+		return ExdScreenConfigurationMesg(mesg);
+
+	case FIT_MESG_NUM_EXD_DATA_FIELD_CONFIGURATION:
+		return ExdDataFieldConfigurationMesg(mesg);
+
+	case FIT_MESG_NUM_EXD_DATA_CONCEPT_CONFIGURATION:
+		return ExdDataConceptConfigurationMesg(mesg);
+
+	case FIT_MESG_NUM_DIVE_SUMMARY:
+		return DiveSummaryMesg(mesg);
+
+	case FIT_MESG_NUM_AAD_ACCEL_FEATURES:
+		return AadAccelFeaturesMesg(mesg);
+
+	case FIT_MESG_NUM_HRV:
+		return HrvMesg(mesg);
+
+	case FIT_MESG_NUM_BEAT_INTERVALS:
+		return BeatIntervalsMesg(mesg);
+
+	case FIT_MESG_NUM_HRV_STATUS_SUMMARY:
+		return HrvStatusSummaryMesg(mesg);
+
+	case FIT_MESG_NUM_HRV_VALUE:
+		return HrvValueMesg(mesg);
+
+	case FIT_MESG_NUM_RAW_BBI:
+		return RawBbiMesg(mesg);
+
+	case FIT_MESG_NUM_RESPIRATION_RATE:
+		return RespirationRateMesg(mesg);
+
+	case FIT_MESG_NUM_CHRONO_SHOT_SESSION:
+		return ChronoShotSessionMesg(mesg);
+
+	case FIT_MESG_NUM_CHRONO_SHOT_DATA:
+		return ChronoShotDataMesg(mesg);
+
+	case FIT_MESG_NUM_TANK_UPDATE:
+		return TankUpdateMesg(mesg);
+
+	case FIT_MESG_NUM_TANK_SUMMARY:
+		return TankSummaryMesg(mesg);
+
+	case FIT_MESG_NUM_SLEEP_ASSESSMENT:
+		return SleepAssessmentMesg(mesg);
+
+	case FIT_MESG_NUM_SKIN_TEMP_OVERNIGHT:
+		return SkinTempOvernightMesg(mesg);
+
+	case FIT_MESG_NUM_PAD:
+		return PadMesg(mesg);
+
+	default:
+		break;
+	}
+	return mesg;
 }
 
-
 } // namespace fit
-

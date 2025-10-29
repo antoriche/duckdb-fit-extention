@@ -9,20 +9,18 @@
 // Tag = production/release/21.171.0-0-g57fed75
 /////////////////////////////////////////////////////////////////////////////////////////////
 
-
 #if !defined(FIT_THREE_D_SENSOR_CALIBRATION_MESG_LISTENER_HPP)
 #define FIT_THREE_D_SENSOR_CALIBRATION_MESG_LISTENER_HPP
 
 #include "fit_three_d_sensor_calibration_mesg.hpp"
 
-namespace fit
-{
+namespace fit {
 
-class ThreeDSensorCalibrationMesgListener
-{
+class ThreeDSensorCalibrationMesgListener {
 public:
-    virtual ~ThreeDSensorCalibrationMesgListener() {}
-    virtual void OnMesg(ThreeDSensorCalibrationMesg& mesg) = 0;
+	virtual ~ThreeDSensorCalibrationMesgListener() {
+	}
+	virtual void OnMesg(ThreeDSensorCalibrationMesg &mesg) = 0;
 };
 
 } // namespace fit

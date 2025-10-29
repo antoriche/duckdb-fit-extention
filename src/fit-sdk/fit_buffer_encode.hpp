@@ -9,7 +9,6 @@
 // Tag = production/release/21.171.0-0-g57fed75
 /////////////////////////////////////////////////////////////////////////////////////////////
 
-
 #if !defined(FIT_BUFFER_ENCODE_HPP)
 #define FIT_BUFFER_ENCODE_HPP
 
@@ -22,25 +21,23 @@
 #include "fit_mesg_definition_listener.hpp"
 #include "fit_mesg_listener.hpp"
 
-namespace fit
-{
+namespace fit {
 
-class BufferEncode : public MesgListener, public MesgDefinitionListener
-{
-   public:
-      BufferEncode(void);
-      void Open();
-      void Write(const MesgDefinition& mesgDef);
-      void Write(const Mesg& mesg);
-      void Write(const std::vector<Mesg>& mesgs);
-      std::string Close(void);
-      void OnMesg(Mesg& mesg);
-      void OnMesgDefinition(MesgDefinition& mesgDef);
+class BufferEncode : public MesgListener, public MesgDefinitionListener {
+public:
+	BufferEncode(void);
+	void Open();
+	void Write(const MesgDefinition &mesgDef);
+	void Write(const Mesg &mesg);
+	void Write(const std::vector<Mesg> &mesgs);
+	std::string Close(void);
+	void OnMesg(Mesg &mesg);
+	void OnMesgDefinition(MesgDefinition &mesgDef);
 
-   private:
-      std::stringstream stringWriter;
-      FIT_UINT32 dataSize;
-      MesgDefinition lastMesgDefinition[FIT_MAX_LOCAL_MESGS];
+private:
+	std::stringstream stringWriter;
+	FIT_UINT32 dataSize;
+	MesgDefinition lastMesgDefinition[FIT_MAX_LOCAL_MESGS];
 };
 
 } // namespace fit

@@ -9,21 +9,18 @@
 // Tag = production/release/21.171.0-0-g57fed75
 /////////////////////////////////////////////////////////////////////////////////////////////
 
-
 #if !defined(FIT_DEVELOPER_FIELD_DESCRIPTION_LISTENER_HPP)
 #define FIT_DEVELOPER_FIELD_DESCRIPTION_LISTENER_HPP
 
 #include "fit_developer_field_description.hpp"
 
-namespace fit
-{
+namespace fit {
 class DeveloperFieldDescription;
 
-class DeveloperFieldDescriptionListener
-{
+class DeveloperFieldDescriptionListener {
 public:
-    virtual ~DeveloperFieldDescriptionListener() {};
-    virtual void OnDeveloperFieldDescription( const DeveloperFieldDescription& desc ) = 0;
+	virtual ~DeveloperFieldDescriptionListener() {};
+	virtual void OnDeveloperFieldDescription(const DeveloperFieldDescription &desc) = 0;
 };
 
 } // namespace fit

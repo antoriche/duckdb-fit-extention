@@ -9,20 +9,18 @@
 // Tag = production/release/21.171.0-0-g57fed75
 /////////////////////////////////////////////////////////////////////////////////////////////
 
-
 #if !defined(FIT_ONE_D_SENSOR_CALIBRATION_MESG_LISTENER_HPP)
 #define FIT_ONE_D_SENSOR_CALIBRATION_MESG_LISTENER_HPP
 
 #include "fit_one_d_sensor_calibration_mesg.hpp"
 
-namespace fit
-{
+namespace fit {
 
-class OneDSensorCalibrationMesgListener
-{
+class OneDSensorCalibrationMesgListener {
 public:
-    virtual ~OneDSensorCalibrationMesgListener() {}
-    virtual void OnMesg(OneDSensorCalibrationMesg& mesg) = 0;
+	virtual ~OneDSensorCalibrationMesgListener() {
+	}
+	virtual void OnMesg(OneDSensorCalibrationMesg &mesg) = 0;
 };
 
 } // namespace fit

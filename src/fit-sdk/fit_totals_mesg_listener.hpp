@@ -9,20 +9,18 @@
 // Tag = production/release/21.171.0-0-g57fed75
 /////////////////////////////////////////////////////////////////////////////////////////////
 
-
 #if !defined(FIT_TOTALS_MESG_LISTENER_HPP)
 #define FIT_TOTALS_MESG_LISTENER_HPP
 
 #include "fit_totals_mesg.hpp"
 
-namespace fit
-{
+namespace fit {
 
-class TotalsMesgListener
-{
+class TotalsMesgListener {
 public:
-    virtual ~TotalsMesgListener() {}
-    virtual void OnMesg(TotalsMesg& mesg) = 0;
+	virtual ~TotalsMesgListener() {
+	}
+	virtual void OnMesg(TotalsMesg &mesg) = 0;
 };
 
 } // namespace fit

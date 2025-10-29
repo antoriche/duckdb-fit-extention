@@ -9,192 +9,165 @@
 // Tag = production/release/21.171.0-0-g57fed75
 /////////////////////////////////////////////////////////////////////////////////////////////
 
-
 #if !defined(FIT_ZONES_TARGET_MESG_HPP)
 #define FIT_ZONES_TARGET_MESG_HPP
 
 #include "fit_mesg.hpp"
 
-namespace fit
-{
+namespace fit {
 
-class ZonesTargetMesg : public Mesg
-{
+class ZonesTargetMesg : public Mesg {
 public:
-    class FieldDefNum final
-    {
-    public:
-       static const FIT_UINT8 MaxHeartRate = 1;
-       static const FIT_UINT8 ThresholdHeartRate = 2;
-       static const FIT_UINT8 FunctionalThresholdPower = 3;
-       static const FIT_UINT8 HrCalcType = 5;
-       static const FIT_UINT8 PwrCalcType = 7;
-       static const FIT_UINT8 Invalid = FIT_FIELD_NUM_INVALID;
-    };
+	class FieldDefNum final {
+	public:
+		static const FIT_UINT8 MaxHeartRate = 1;
+		static const FIT_UINT8 ThresholdHeartRate = 2;
+		static const FIT_UINT8 FunctionalThresholdPower = 3;
+		static const FIT_UINT8 HrCalcType = 5;
+		static const FIT_UINT8 PwrCalcType = 7;
+		static const FIT_UINT8 Invalid = FIT_FIELD_NUM_INVALID;
+	};
 
-    ZonesTargetMesg(void) : Mesg(Profile::MESG_ZONES_TARGET)
-    {
-    }
+	ZonesTargetMesg(void) : Mesg(Profile::MESG_ZONES_TARGET) {
+	}
 
-    ZonesTargetMesg(const Mesg &mesg) : Mesg(mesg)
-    {
-    }
+	ZonesTargetMesg(const Mesg &mesg) : Mesg(mesg) {
+	}
 
-    ///////////////////////////////////////////////////////////////////////
-    // Checks the validity of max_heart_rate field
-    // Returns FIT_TRUE if field is valid
-    ///////////////////////////////////////////////////////////////////////
-    FIT_BOOL IsMaxHeartRateValid() const
-    {
-        const Field* field = GetField(1);
-        if( FIT_NULL == field )
-        {
-            return FIT_FALSE;
-        }
+	///////////////////////////////////////////////////////////////////////
+	// Checks the validity of max_heart_rate field
+	// Returns FIT_TRUE if field is valid
+	///////////////////////////////////////////////////////////////////////
+	FIT_BOOL IsMaxHeartRateValid() const {
+		const Field *field = GetField(1);
+		if (FIT_NULL == field) {
+			return FIT_FALSE;
+		}
 
-        return field->IsValueValid();
-    }
+		return field->IsValueValid();
+	}
 
-    ///////////////////////////////////////////////////////////////////////
-    // Returns max_heart_rate field
-    ///////////////////////////////////////////////////////////////////////
-    FIT_UINT8 GetMaxHeartRate(void) const
-    {
-        return GetFieldUINT8Value(1, 0, FIT_SUBFIELD_INDEX_MAIN_FIELD);
-    }
+	///////////////////////////////////////////////////////////////////////
+	// Returns max_heart_rate field
+	///////////////////////////////////////////////////////////////////////
+	FIT_UINT8 GetMaxHeartRate(void) const {
+		return GetFieldUINT8Value(1, 0, FIT_SUBFIELD_INDEX_MAIN_FIELD);
+	}
 
-    ///////////////////////////////////////////////////////////////////////
-    // Set max_heart_rate field
-    ///////////////////////////////////////////////////////////////////////
-    void SetMaxHeartRate(FIT_UINT8 maxHeartRate)
-    {
-        SetFieldUINT8Value(1, maxHeartRate, 0, FIT_SUBFIELD_INDEX_MAIN_FIELD);
-    }
+	///////////////////////////////////////////////////////////////////////
+	// Set max_heart_rate field
+	///////////////////////////////////////////////////////////////////////
+	void SetMaxHeartRate(FIT_UINT8 maxHeartRate) {
+		SetFieldUINT8Value(1, maxHeartRate, 0, FIT_SUBFIELD_INDEX_MAIN_FIELD);
+	}
 
-    ///////////////////////////////////////////////////////////////////////
-    // Checks the validity of threshold_heart_rate field
-    // Returns FIT_TRUE if field is valid
-    ///////////////////////////////////////////////////////////////////////
-    FIT_BOOL IsThresholdHeartRateValid() const
-    {
-        const Field* field = GetField(2);
-        if( FIT_NULL == field )
-        {
-            return FIT_FALSE;
-        }
+	///////////////////////////////////////////////////////////////////////
+	// Checks the validity of threshold_heart_rate field
+	// Returns FIT_TRUE if field is valid
+	///////////////////////////////////////////////////////////////////////
+	FIT_BOOL IsThresholdHeartRateValid() const {
+		const Field *field = GetField(2);
+		if (FIT_NULL == field) {
+			return FIT_FALSE;
+		}
 
-        return field->IsValueValid();
-    }
+		return field->IsValueValid();
+	}
 
-    ///////////////////////////////////////////////////////////////////////
-    // Returns threshold_heart_rate field
-    ///////////////////////////////////////////////////////////////////////
-    FIT_UINT8 GetThresholdHeartRate(void) const
-    {
-        return GetFieldUINT8Value(2, 0, FIT_SUBFIELD_INDEX_MAIN_FIELD);
-    }
+	///////////////////////////////////////////////////////////////////////
+	// Returns threshold_heart_rate field
+	///////////////////////////////////////////////////////////////////////
+	FIT_UINT8 GetThresholdHeartRate(void) const {
+		return GetFieldUINT8Value(2, 0, FIT_SUBFIELD_INDEX_MAIN_FIELD);
+	}
 
-    ///////////////////////////////////////////////////////////////////////
-    // Set threshold_heart_rate field
-    ///////////////////////////////////////////////////////////////////////
-    void SetThresholdHeartRate(FIT_UINT8 thresholdHeartRate)
-    {
-        SetFieldUINT8Value(2, thresholdHeartRate, 0, FIT_SUBFIELD_INDEX_MAIN_FIELD);
-    }
+	///////////////////////////////////////////////////////////////////////
+	// Set threshold_heart_rate field
+	///////////////////////////////////////////////////////////////////////
+	void SetThresholdHeartRate(FIT_UINT8 thresholdHeartRate) {
+		SetFieldUINT8Value(2, thresholdHeartRate, 0, FIT_SUBFIELD_INDEX_MAIN_FIELD);
+	}
 
-    ///////////////////////////////////////////////////////////////////////
-    // Checks the validity of functional_threshold_power field
-    // Returns FIT_TRUE if field is valid
-    ///////////////////////////////////////////////////////////////////////
-    FIT_BOOL IsFunctionalThresholdPowerValid() const
-    {
-        const Field* field = GetField(3);
-        if( FIT_NULL == field )
-        {
-            return FIT_FALSE;
-        }
+	///////////////////////////////////////////////////////////////////////
+	// Checks the validity of functional_threshold_power field
+	// Returns FIT_TRUE if field is valid
+	///////////////////////////////////////////////////////////////////////
+	FIT_BOOL IsFunctionalThresholdPowerValid() const {
+		const Field *field = GetField(3);
+		if (FIT_NULL == field) {
+			return FIT_FALSE;
+		}
 
-        return field->IsValueValid();
-    }
+		return field->IsValueValid();
+	}
 
-    ///////////////////////////////////////////////////////////////////////
-    // Returns functional_threshold_power field
-    ///////////////////////////////////////////////////////////////////////
-    FIT_UINT16 GetFunctionalThresholdPower(void) const
-    {
-        return GetFieldUINT16Value(3, 0, FIT_SUBFIELD_INDEX_MAIN_FIELD);
-    }
+	///////////////////////////////////////////////////////////////////////
+	// Returns functional_threshold_power field
+	///////////////////////////////////////////////////////////////////////
+	FIT_UINT16 GetFunctionalThresholdPower(void) const {
+		return GetFieldUINT16Value(3, 0, FIT_SUBFIELD_INDEX_MAIN_FIELD);
+	}
 
-    ///////////////////////////////////////////////////////////////////////
-    // Set functional_threshold_power field
-    ///////////////////////////////////////////////////////////////////////
-    void SetFunctionalThresholdPower(FIT_UINT16 functionalThresholdPower)
-    {
-        SetFieldUINT16Value(3, functionalThresholdPower, 0, FIT_SUBFIELD_INDEX_MAIN_FIELD);
-    }
+	///////////////////////////////////////////////////////////////////////
+	// Set functional_threshold_power field
+	///////////////////////////////////////////////////////////////////////
+	void SetFunctionalThresholdPower(FIT_UINT16 functionalThresholdPower) {
+		SetFieldUINT16Value(3, functionalThresholdPower, 0, FIT_SUBFIELD_INDEX_MAIN_FIELD);
+	}
 
-    ///////////////////////////////////////////////////////////////////////
-    // Checks the validity of hr_calc_type field
-    // Returns FIT_TRUE if field is valid
-    ///////////////////////////////////////////////////////////////////////
-    FIT_BOOL IsHrCalcTypeValid() const
-    {
-        const Field* field = GetField(5);
-        if( FIT_NULL == field )
-        {
-            return FIT_FALSE;
-        }
+	///////////////////////////////////////////////////////////////////////
+	// Checks the validity of hr_calc_type field
+	// Returns FIT_TRUE if field is valid
+	///////////////////////////////////////////////////////////////////////
+	FIT_BOOL IsHrCalcTypeValid() const {
+		const Field *field = GetField(5);
+		if (FIT_NULL == field) {
+			return FIT_FALSE;
+		}
 
-        return field->IsValueValid();
-    }
+		return field->IsValueValid();
+	}
 
-    ///////////////////////////////////////////////////////////////////////
-    // Returns hr_calc_type field
-    ///////////////////////////////////////////////////////////////////////
-    FIT_HR_ZONE_CALC GetHrCalcType(void) const
-    {
-        return GetFieldENUMValue(5, 0, FIT_SUBFIELD_INDEX_MAIN_FIELD);
-    }
+	///////////////////////////////////////////////////////////////////////
+	// Returns hr_calc_type field
+	///////////////////////////////////////////////////////////////////////
+	FIT_HR_ZONE_CALC GetHrCalcType(void) const {
+		return GetFieldENUMValue(5, 0, FIT_SUBFIELD_INDEX_MAIN_FIELD);
+	}
 
-    ///////////////////////////////////////////////////////////////////////
-    // Set hr_calc_type field
-    ///////////////////////////////////////////////////////////////////////
-    void SetHrCalcType(FIT_HR_ZONE_CALC hrCalcType)
-    {
-        SetFieldENUMValue(5, hrCalcType, 0, FIT_SUBFIELD_INDEX_MAIN_FIELD);
-    }
+	///////////////////////////////////////////////////////////////////////
+	// Set hr_calc_type field
+	///////////////////////////////////////////////////////////////////////
+	void SetHrCalcType(FIT_HR_ZONE_CALC hrCalcType) {
+		SetFieldENUMValue(5, hrCalcType, 0, FIT_SUBFIELD_INDEX_MAIN_FIELD);
+	}
 
-    ///////////////////////////////////////////////////////////////////////
-    // Checks the validity of pwr_calc_type field
-    // Returns FIT_TRUE if field is valid
-    ///////////////////////////////////////////////////////////////////////
-    FIT_BOOL IsPwrCalcTypeValid() const
-    {
-        const Field* field = GetField(7);
-        if( FIT_NULL == field )
-        {
-            return FIT_FALSE;
-        }
+	///////////////////////////////////////////////////////////////////////
+	// Checks the validity of pwr_calc_type field
+	// Returns FIT_TRUE if field is valid
+	///////////////////////////////////////////////////////////////////////
+	FIT_BOOL IsPwrCalcTypeValid() const {
+		const Field *field = GetField(7);
+		if (FIT_NULL == field) {
+			return FIT_FALSE;
+		}
 
-        return field->IsValueValid();
-    }
+		return field->IsValueValid();
+	}
 
-    ///////////////////////////////////////////////////////////////////////
-    // Returns pwr_calc_type field
-    ///////////////////////////////////////////////////////////////////////
-    FIT_PWR_ZONE_CALC GetPwrCalcType(void) const
-    {
-        return GetFieldENUMValue(7, 0, FIT_SUBFIELD_INDEX_MAIN_FIELD);
-    }
+	///////////////////////////////////////////////////////////////////////
+	// Returns pwr_calc_type field
+	///////////////////////////////////////////////////////////////////////
+	FIT_PWR_ZONE_CALC GetPwrCalcType(void) const {
+		return GetFieldENUMValue(7, 0, FIT_SUBFIELD_INDEX_MAIN_FIELD);
+	}
 
-    ///////////////////////////////////////////////////////////////////////
-    // Set pwr_calc_type field
-    ///////////////////////////////////////////////////////////////////////
-    void SetPwrCalcType(FIT_PWR_ZONE_CALC pwrCalcType)
-    {
-        SetFieldENUMValue(7, pwrCalcType, 0, FIT_SUBFIELD_INDEX_MAIN_FIELD);
-    }
-
+	///////////////////////////////////////////////////////////////////////
+	// Set pwr_calc_type field
+	///////////////////////////////////////////////////////////////////////
+	void SetPwrCalcType(FIT_PWR_ZONE_CALC pwrCalcType) {
+		SetFieldENUMValue(7, pwrCalcType, 0, FIT_SUBFIELD_INDEX_MAIN_FIELD);
+	}
 };
 
 } // namespace fit

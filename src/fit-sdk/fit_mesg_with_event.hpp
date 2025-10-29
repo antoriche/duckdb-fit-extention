@@ -9,28 +9,26 @@
 // Tag = production/release/21.171.0-0-g57fed75
 /////////////////////////////////////////////////////////////////////////////////////////////
 
-
 #if !defined(FIT_MESG_WITH_EVENT_HPP)
 #define FIT_MESG_WITH_EVENT_HPP
 
 #include "fit.hpp"
 #include "fit_profile.hpp"
 
-namespace fit
-{
+namespace fit {
 
-class MesgWithEvent
-{
+class MesgWithEvent {
 public:
-    virtual ~MesgWithEvent() {}
-    virtual FIT_DATE_TIME GetTimestamp(void) const = 0;
-    virtual void SetTimestamp(FIT_DATE_TIME timestamp) = 0;
-    virtual FIT_EVENT GetEvent() const = 0;
-    virtual void SetEvent(FIT_EVENT event) = 0;
-    virtual FIT_EVENT_TYPE GetEventType() const = 0;
-    virtual void SetEventType(FIT_EVENT_TYPE type) = 0;
-    virtual FIT_UINT8 GetEventGroup() const = 0;
-    virtual void SetEventGroup(FIT_UINT8 group) = 0;
+	virtual ~MesgWithEvent() {
+	}
+	virtual FIT_DATE_TIME GetTimestamp(void) const = 0;
+	virtual void SetTimestamp(FIT_DATE_TIME timestamp) = 0;
+	virtual FIT_EVENT GetEvent() const = 0;
+	virtual void SetEvent(FIT_EVENT event) = 0;
+	virtual FIT_EVENT_TYPE GetEventType() const = 0;
+	virtual void SetEventType(FIT_EVENT_TYPE type) = 0;
+	virtual FIT_UINT8 GetEventGroup() const = 0;
+	virtual void SetEventGroup(FIT_UINT8 group) = 0;
 };
 
 } // namespace fit

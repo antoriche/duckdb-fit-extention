@@ -9,20 +9,18 @@
 // Tag = production/release/21.171.0-0-g57fed75
 /////////////////////////////////////////////////////////////////////////////////////////////
 
-
 #if !defined(FIT_ANT_RX_MESG_LISTENER_HPP)
 #define FIT_ANT_RX_MESG_LISTENER_HPP
 
 #include "fit_ant_rx_mesg.hpp"
 
-namespace fit
-{
+namespace fit {
 
-class AntRxMesgListener
-{
+class AntRxMesgListener {
 public:
-    virtual ~AntRxMesgListener() {}
-    virtual void OnMesg(AntRxMesg& mesg) = 0;
+	virtual ~AntRxMesgListener() {
+	}
+	virtual void OnMesg(AntRxMesg &mesg) = 0;
 };
 
 } // namespace fit

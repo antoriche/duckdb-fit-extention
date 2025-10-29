@@ -9,20 +9,18 @@
 // Tag = production/release/21.171.0-0-g57fed75
 /////////////////////////////////////////////////////////////////////////////////////////////
 
-
 #if !defined(FIT_GYROSCOPE_DATA_MESG_LISTENER_HPP)
 #define FIT_GYROSCOPE_DATA_MESG_LISTENER_HPP
 
 #include "fit_gyroscope_data_mesg.hpp"
 
-namespace fit
-{
+namespace fit {
 
-class GyroscopeDataMesgListener
-{
+class GyroscopeDataMesgListener {
 public:
-    virtual ~GyroscopeDataMesgListener() {}
-    virtual void OnMesg(GyroscopeDataMesg& mesg) = 0;
+	virtual ~GyroscopeDataMesgListener() {
+	}
+	virtual void OnMesg(GyroscopeDataMesg &mesg) = 0;
 };
 
 } // namespace fit

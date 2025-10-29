@@ -9,20 +9,18 @@
 // Tag = production/release/21.171.0-0-g57fed75
 /////////////////////////////////////////////////////////////////////////////////////////////
 
-
 #if !defined(FIT_AAD_ACCEL_FEATURES_MESG_LISTENER_HPP)
 #define FIT_AAD_ACCEL_FEATURES_MESG_LISTENER_HPP
 
 #include "fit_aad_accel_features_mesg.hpp"
 
-namespace fit
-{
+namespace fit {
 
-class AadAccelFeaturesMesgListener
-{
+class AadAccelFeaturesMesgListener {
 public:
-    virtual ~AadAccelFeaturesMesgListener() {}
-    virtual void OnMesg(AadAccelFeaturesMesg& mesg) = 0;
+	virtual ~AadAccelFeaturesMesgListener() {
+	}
+	virtual void OnMesg(AadAccelFeaturesMesg &mesg) = 0;
 };
 
 } // namespace fit

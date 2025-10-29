@@ -9,20 +9,18 @@
 // Tag = production/release/21.171.0-0-g57fed75
 /////////////////////////////////////////////////////////////////////////////////////////////
 
-
 #if !defined(FIT_BAROMETER_DATA_MESG_LISTENER_HPP)
 #define FIT_BAROMETER_DATA_MESG_LISTENER_HPP
 
 #include "fit_barometer_data_mesg.hpp"
 
-namespace fit
-{
+namespace fit {
 
-class BarometerDataMesgListener
-{
+class BarometerDataMesgListener {
 public:
-    virtual ~BarometerDataMesgListener() {}
-    virtual void OnMesg(BarometerDataMesg& mesg) = 0;
+	virtual ~BarometerDataMesgListener() {
+	}
+	virtual void OnMesg(BarometerDataMesg &mesg) = 0;
 };
 
 } // namespace fit

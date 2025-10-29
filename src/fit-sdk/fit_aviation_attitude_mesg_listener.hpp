@@ -9,20 +9,18 @@
 // Tag = production/release/21.171.0-0-g57fed75
 /////////////////////////////////////////////////////////////////////////////////////////////
 
-
 #if !defined(FIT_AVIATION_ATTITUDE_MESG_LISTENER_HPP)
 #define FIT_AVIATION_ATTITUDE_MESG_LISTENER_HPP
 
 #include "fit_aviation_attitude_mesg.hpp"
 
-namespace fit
-{
+namespace fit {
 
-class AviationAttitudeMesgListener
-{
+class AviationAttitudeMesgListener {
 public:
-    virtual ~AviationAttitudeMesgListener() {}
-    virtual void OnMesg(AviationAttitudeMesg& mesg) = 0;
+	virtual ~AviationAttitudeMesgListener() {
+	}
+	virtual void OnMesg(AviationAttitudeMesg &mesg) = 0;
 };
 
 } // namespace fit

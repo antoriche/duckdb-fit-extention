@@ -9,20 +9,18 @@
 // Tag = production/release/21.171.0-0-g57fed75
 /////////////////////////////////////////////////////////////////////////////////////////////
 
-
 #if !defined(FIT_SEGMENT_LEADERBOARD_ENTRY_MESG_LISTENER_HPP)
 #define FIT_SEGMENT_LEADERBOARD_ENTRY_MESG_LISTENER_HPP
 
 #include "fit_segment_leaderboard_entry_mesg.hpp"
 
-namespace fit
-{
+namespace fit {
 
-class SegmentLeaderboardEntryMesgListener
-{
+class SegmentLeaderboardEntryMesgListener {
 public:
-    virtual ~SegmentLeaderboardEntryMesgListener() {}
-    virtual void OnMesg(SegmentLeaderboardEntryMesg& mesg) = 0;
+	virtual ~SegmentLeaderboardEntryMesgListener() {
+	}
+	virtual void OnMesg(SegmentLeaderboardEntryMesg &mesg) = 0;
 };
 
 } // namespace fit

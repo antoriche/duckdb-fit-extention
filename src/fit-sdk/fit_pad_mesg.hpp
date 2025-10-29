@@ -9,32 +9,25 @@
 // Tag = production/release/21.171.0-0-g57fed75
 /////////////////////////////////////////////////////////////////////////////////////////////
 
-
 #if !defined(FIT_PAD_MESG_HPP)
 #define FIT_PAD_MESG_HPP
 
 #include "fit_mesg.hpp"
 
-namespace fit
-{
+namespace fit {
 
-class PadMesg : public Mesg
-{
+class PadMesg : public Mesg {
 public:
-    class FieldDefNum final
-    {
-    public:
-       static const FIT_UINT8 Invalid = FIT_FIELD_NUM_INVALID;
-    };
+	class FieldDefNum final {
+	public:
+		static const FIT_UINT8 Invalid = FIT_FIELD_NUM_INVALID;
+	};
 
-    PadMesg(void) : Mesg(Profile::MESG_PAD)
-    {
-    }
+	PadMesg(void) : Mesg(Profile::MESG_PAD) {
+	}
 
-    PadMesg(const Mesg &mesg) : Mesg(mesg)
-    {
-    }
-
+	PadMesg(const Mesg &mesg) : Mesg(mesg) {
+	}
 };
 
 } // namespace fit

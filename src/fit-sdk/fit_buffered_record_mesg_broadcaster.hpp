@@ -9,7 +9,6 @@
 // Tag = production/release/21.171.0-0-g57fed75
 /////////////////////////////////////////////////////////////////////////////////////////////
 
-
 #if !defined(FIT_BUFFERED_RECORD_MESG_BROADCASTER_HPP)
 #define FIT_BUFFERED_RECORD_MESG_BROADCASTER_HPP
 
@@ -18,20 +17,18 @@
 #include "fit_buffered_record_mesg.hpp"
 #include "fit_record_mesg_listener.hpp"
 
-namespace fit
-{
+namespace fit {
 
-class BufferedRecordMesgBroadcaster : public RecordMesgListener
-{
-   public:
-      BufferedRecordMesgBroadcaster(void);
-      void AddListener(BufferedRecordMesgListener& mesgListener);
-      void RemoveListener(BufferedRecordMesgListener& mesgListener);
-      void OnMesg(RecordMesg& mesg);
+class BufferedRecordMesgBroadcaster : public RecordMesgListener {
+public:
+	BufferedRecordMesgBroadcaster(void);
+	void AddListener(BufferedRecordMesgListener &mesgListener);
+	void RemoveListener(BufferedRecordMesgListener &mesgListener);
+	void OnMesg(RecordMesg &mesg);
 
-   private:
-      BufferedRecordMesg bufferedRecordMesg;
-      std::vector<BufferedRecordMesgListener*> listeners;
+private:
+	BufferedRecordMesg bufferedRecordMesg;
+	std::vector<BufferedRecordMesgListener *> listeners;
 };
 
 } // namespace fit

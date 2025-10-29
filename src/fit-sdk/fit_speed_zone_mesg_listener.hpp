@@ -9,20 +9,18 @@
 // Tag = production/release/21.171.0-0-g57fed75
 /////////////////////////////////////////////////////////////////////////////////////////////
 
-
 #if !defined(FIT_SPEED_ZONE_MESG_LISTENER_HPP)
 #define FIT_SPEED_ZONE_MESG_LISTENER_HPP
 
 #include "fit_speed_zone_mesg.hpp"
 
-namespace fit
-{
+namespace fit {
 
-class SpeedZoneMesgListener
-{
+class SpeedZoneMesgListener {
 public:
-    virtual ~SpeedZoneMesgListener() {}
-    virtual void OnMesg(SpeedZoneMesg& mesg) = 0;
+	virtual ~SpeedZoneMesgListener() {
+	}
+	virtual void OnMesg(SpeedZoneMesg &mesg) = 0;
 };
 
 } // namespace fit

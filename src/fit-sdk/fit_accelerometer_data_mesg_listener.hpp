@@ -9,20 +9,18 @@
 // Tag = production/release/21.171.0-0-g57fed75
 /////////////////////////////////////////////////////////////////////////////////////////////
 
-
 #if !defined(FIT_ACCELEROMETER_DATA_MESG_LISTENER_HPP)
 #define FIT_ACCELEROMETER_DATA_MESG_LISTENER_HPP
 
 #include "fit_accelerometer_data_mesg.hpp"
 
-namespace fit
-{
+namespace fit {
 
-class AccelerometerDataMesgListener
-{
+class AccelerometerDataMesgListener {
 public:
-    virtual ~AccelerometerDataMesgListener() {}
-    virtual void OnMesg(AccelerometerDataMesg& mesg) = 0;
+	virtual ~AccelerometerDataMesgListener() {
+	}
+	virtual void OnMesg(AccelerometerDataMesg &mesg) = 0;
 };
 
 } // namespace fit

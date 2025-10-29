@@ -9,20 +9,18 @@
 // Tag = production/release/21.171.0-0-g57fed75
 /////////////////////////////////////////////////////////////////////////////////////////////
 
-
 #if !defined(FIT_FILE_CREATOR_MESG_LISTENER_HPP)
 #define FIT_FILE_CREATOR_MESG_LISTENER_HPP
 
 #include "fit_file_creator_mesg.hpp"
 
-namespace fit
-{
+namespace fit {
 
-class FileCreatorMesgListener
-{
+class FileCreatorMesgListener {
 public:
-    virtual ~FileCreatorMesgListener() {}
-    virtual void OnMesg(FileCreatorMesg& mesg) = 0;
+	virtual ~FileCreatorMesgListener() {
+	}
+	virtual void OnMesg(FileCreatorMesg &mesg) = 0;
 };
 
 } // namespace fit

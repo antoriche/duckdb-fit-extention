@@ -9,20 +9,18 @@
 // Tag = production/release/21.171.0-0-g57fed75
 /////////////////////////////////////////////////////////////////////////////////////////////
 
-
 #if !defined(FIT_HSA_STRESS_DATA_MESG_LISTENER_HPP)
 #define FIT_HSA_STRESS_DATA_MESG_LISTENER_HPP
 
 #include "fit_hsa_stress_data_mesg.hpp"
 
-namespace fit
-{
+namespace fit {
 
-class HsaStressDataMesgListener
-{
+class HsaStressDataMesgListener {
 public:
-    virtual ~HsaStressDataMesgListener() {}
-    virtual void OnMesg(HsaStressDataMesg& mesg) = 0;
+	virtual ~HsaStressDataMesgListener() {
+	}
+	virtual void OnMesg(HsaStressDataMesg &mesg) = 0;
 };
 
 } // namespace fit

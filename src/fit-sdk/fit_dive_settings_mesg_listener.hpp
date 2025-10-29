@@ -9,20 +9,18 @@
 // Tag = production/release/21.171.0-0-g57fed75
 /////////////////////////////////////////////////////////////////////////////////////////////
 
-
 #if !defined(FIT_DIVE_SETTINGS_MESG_LISTENER_HPP)
 #define FIT_DIVE_SETTINGS_MESG_LISTENER_HPP
 
 #include "fit_dive_settings_mesg.hpp"
 
-namespace fit
-{
+namespace fit {
 
-class DiveSettingsMesgListener
-{
+class DiveSettingsMesgListener {
 public:
-    virtual ~DiveSettingsMesgListener() {}
-    virtual void OnMesg(DiveSettingsMesg& mesg) = 0;
+	virtual ~DiveSettingsMesgListener() {
+	}
+	virtual void OnMesg(DiveSettingsMesg &mesg) = 0;
 };
 
 } // namespace fit

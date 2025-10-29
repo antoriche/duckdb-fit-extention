@@ -9,18 +9,14 @@
 // Tag = production/release/21.171.0-0-g57fed75
 /////////////////////////////////////////////////////////////////////////////////////////////
 
-
 #if !defined(FIT_BUFFERED_RECORD_MESG_HPP)
 #define FIT_BUFFERED_RECORD_MESG_HPP
 
 #include "fit_record_mesg.hpp"
 
-namespace fit
-{
+namespace fit {
 
-class BufferedRecordMesg : public RecordMesg
-{
-};
+class BufferedRecordMesg : public RecordMesg {};
 
 } // namespace fit
 

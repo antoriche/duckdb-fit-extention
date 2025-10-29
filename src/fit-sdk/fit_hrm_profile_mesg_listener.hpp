@@ -9,20 +9,18 @@
 // Tag = production/release/21.171.0-0-g57fed75
 /////////////////////////////////////////////////////////////////////////////////////////////
 
-
 #if !defined(FIT_HRM_PROFILE_MESG_LISTENER_HPP)
 #define FIT_HRM_PROFILE_MESG_LISTENER_HPP
 
 #include "fit_hrm_profile_mesg.hpp"
 
-namespace fit
-{
+namespace fit {
 
-class HrmProfileMesgListener
-{
+class HrmProfileMesgListener {
 public:
-    virtual ~HrmProfileMesgListener() {}
-    virtual void OnMesg(HrmProfileMesg& mesg) = 0;
+	virtual ~HrmProfileMesgListener() {
+	}
+	virtual void OnMesg(HrmProfileMesg &mesg) = 0;
 };
 
 } // namespace fit

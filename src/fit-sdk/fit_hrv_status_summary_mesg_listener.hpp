@@ -9,20 +9,18 @@
 // Tag = production/release/21.171.0-0-g57fed75
 /////////////////////////////////////////////////////////////////////////////////////////////
 
-
 #if !defined(FIT_HRV_STATUS_SUMMARY_MESG_LISTENER_HPP)
 #define FIT_HRV_STATUS_SUMMARY_MESG_LISTENER_HPP
 
 #include "fit_hrv_status_summary_mesg.hpp"
 
-namespace fit
-{
+namespace fit {
 
-class HrvStatusSummaryMesgListener
-{
+class HrvStatusSummaryMesgListener {
 public:
-    virtual ~HrvStatusSummaryMesgListener() {}
-    virtual void OnMesg(HrvStatusSummaryMesg& mesg) = 0;
+	virtual ~HrvStatusSummaryMesgListener() {
+	}
+	virtual void OnMesg(HrvStatusSummaryMesg &mesg) = 0;
 };
 
 } // namespace fit

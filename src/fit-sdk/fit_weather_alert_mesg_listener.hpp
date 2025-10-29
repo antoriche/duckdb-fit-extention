@@ -9,20 +9,18 @@
 // Tag = production/release/21.171.0-0-g57fed75
 /////////////////////////////////////////////////////////////////////////////////////////////
 
-
 #if !defined(FIT_WEATHER_ALERT_MESG_LISTENER_HPP)
 #define FIT_WEATHER_ALERT_MESG_LISTENER_HPP
 
 #include "fit_weather_alert_mesg.hpp"
 
-namespace fit
-{
+namespace fit {
 
-class WeatherAlertMesgListener
-{
+class WeatherAlertMesgListener {
 public:
-    virtual ~WeatherAlertMesgListener() {}
-    virtual void OnMesg(WeatherAlertMesg& mesg) = 0;
+	virtual ~WeatherAlertMesgListener() {
+	}
+	virtual void OnMesg(WeatherAlertMesg &mesg) = 0;
 };
 
 } // namespace fit

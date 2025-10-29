@@ -9,20 +9,18 @@
 // Tag = production/release/21.171.0-0-g57fed75
 /////////////////////////////////////////////////////////////////////////////////////////////
 
-
 #if !defined(FIT_SET_MESG_LISTENER_HPP)
 #define FIT_SET_MESG_LISTENER_HPP
 
 #include "fit_set_mesg.hpp"
 
-namespace fit
-{
+namespace fit {
 
-class SetMesgListener
-{
+class SetMesgListener {
 public:
-    virtual ~SetMesgListener() {}
-    virtual void OnMesg(SetMesg& mesg) = 0;
+	virtual ~SetMesgListener() {
+	}
+	virtual void OnMesg(SetMesg &mesg) = 0;
 };
 
 } // namespace fit

@@ -9,20 +9,18 @@
 // Tag = production/release/21.171.0-0-g57fed75
 /////////////////////////////////////////////////////////////////////////////////////////////
 
-
 #if !defined(FIT_SPLIT_MESG_LISTENER_HPP)
 #define FIT_SPLIT_MESG_LISTENER_HPP
 
 #include "fit_split_mesg.hpp"
 
-namespace fit
-{
+namespace fit {
 
-class SplitMesgListener
-{
+class SplitMesgListener {
 public:
-    virtual ~SplitMesgListener() {}
-    virtual void OnMesg(SplitMesg& mesg) = 0;
+	virtual ~SplitMesgListener() {
+	}
+	virtual void OnMesg(SplitMesg &mesg) = 0;
 };
 
 } // namespace fit

@@ -9,20 +9,18 @@
 // Tag = production/release/21.171.0-0-g57fed75
 /////////////////////////////////////////////////////////////////////////////////////////////
 
-
 #if !defined(FIT_SDM_PROFILE_MESG_LISTENER_HPP)
 #define FIT_SDM_PROFILE_MESG_LISTENER_HPP
 
 #include "fit_sdm_profile_mesg.hpp"
 
-namespace fit
-{
+namespace fit {
 
-class SdmProfileMesgListener
-{
+class SdmProfileMesgListener {
 public:
-    virtual ~SdmProfileMesgListener() {}
-    virtual void OnMesg(SdmProfileMesg& mesg) = 0;
+	virtual ~SdmProfileMesgListener() {
+	}
+	virtual void OnMesg(SdmProfileMesg &mesg) = 0;
 };
 
 } // namespace fit

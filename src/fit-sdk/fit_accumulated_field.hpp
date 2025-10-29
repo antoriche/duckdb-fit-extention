@@ -9,33 +9,28 @@
 // Tag = production/release/21.171.0-0-g57fed75
 /////////////////////////////////////////////////////////////////////////////////////////////
 
-
 #if !defined(FIT_ACCUMULATED_FIELD_HPP)
 #define FIT_ACCUMULATED_FIELD_HPP
 
 #include "fit.hpp"
 
-namespace fit
-{
+namespace fit {
 
-class AccumulatedField
-{
-   public:
-      FIT_UINT16 mesgNum;
-      FIT_UINT8 destFieldNum; //Field# to accumulate into
-      FIT_UINT32 lastValue;
-      FIT_UINT32 accumulatedValue;
+class AccumulatedField {
+public:
+	FIT_UINT16 mesgNum;
+	FIT_UINT8 destFieldNum; // Field# to accumulate into
+	FIT_UINT32 lastValue;
+	FIT_UINT32 accumulatedValue;
 
-      AccumulatedField();
-      AccumulatedField(const FIT_UINT16 newMesgNum, const FIT_UINT8 destFieldNum);
-      FIT_UINT32 Accumulate(const FIT_UINT32 value, const FIT_UINT8 bits);
-      FIT_UINT32 Set(FIT_UINT32 value);
+	AccumulatedField();
+	AccumulatedField(const FIT_UINT16 newMesgNum, const FIT_UINT8 destFieldNum);
+	FIT_UINT32 Accumulate(const FIT_UINT32 value, const FIT_UINT8 bits);
+	FIT_UINT32 Set(FIT_UINT32 value);
 
-   private:
+private:
 };
 
 } // namespace fit
 
 #endif // defined(FIT_ACCUMULATED_FIELD_HPP)
-
-

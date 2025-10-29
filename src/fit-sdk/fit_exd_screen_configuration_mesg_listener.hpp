@@ -9,20 +9,18 @@
 // Tag = production/release/21.171.0-0-g57fed75
 /////////////////////////////////////////////////////////////////////////////////////////////
 
-
 #if !defined(FIT_EXD_SCREEN_CONFIGURATION_MESG_LISTENER_HPP)
 #define FIT_EXD_SCREEN_CONFIGURATION_MESG_LISTENER_HPP
 
 #include "fit_exd_screen_configuration_mesg.hpp"
 
-namespace fit
-{
+namespace fit {
 
-class ExdScreenConfigurationMesgListener
-{
+class ExdScreenConfigurationMesgListener {
 public:
-    virtual ~ExdScreenConfigurationMesgListener() {}
-    virtual void OnMesg(ExdScreenConfigurationMesg& mesg) = 0;
+	virtual ~ExdScreenConfigurationMesgListener() {
+	}
+	virtual void OnMesg(ExdScreenConfigurationMesg &mesg) = 0;
 };
 
 } // namespace fit

@@ -9,20 +9,18 @@
 // Tag = production/release/21.171.0-0-g57fed75
 /////////////////////////////////////////////////////////////////////////////////////////////
 
-
 #if !defined(FIT_BLOOD_PRESSURE_MESG_LISTENER_HPP)
 #define FIT_BLOOD_PRESSURE_MESG_LISTENER_HPP
 
 #include "fit_blood_pressure_mesg.hpp"
 
-namespace fit
-{
+namespace fit {
 
-class BloodPressureMesgListener
-{
+class BloodPressureMesgListener {
 public:
-    virtual ~BloodPressureMesgListener() {}
-    virtual void OnMesg(BloodPressureMesg& mesg) = 0;
+	virtual ~BloodPressureMesgListener() {
+	}
+	virtual void OnMesg(BloodPressureMesg &mesg) = 0;
 };
 
 } // namespace fit

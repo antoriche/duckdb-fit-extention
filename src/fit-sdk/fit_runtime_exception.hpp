@@ -9,23 +9,18 @@
 // Tag = production/release/21.171.0-0-g57fed75
 /////////////////////////////////////////////////////////////////////////////////////////////
 
-
 #if !defined(FIT_RUNTIME_EXCEPTION_HPP)
 #define FIT_RUNTIME_EXCEPTION_HPP
 
 #include <stdexcept>
 #include <string>
 
-namespace fit
-{
+namespace fit {
 
-class RuntimeException : public std::runtime_error
-{
+class RuntimeException : public std::runtime_error {
 public:
-    RuntimeException(const std::string& msg = "")
-        : runtime_error(msg)
-    {
-    }
+	RuntimeException(const std::string &msg = "") : runtime_error(msg) {
+	}
 };
 
 } // namespace fit

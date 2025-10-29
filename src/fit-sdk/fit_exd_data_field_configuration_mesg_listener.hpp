@@ -9,20 +9,18 @@
 // Tag = production/release/21.171.0-0-g57fed75
 /////////////////////////////////////////////////////////////////////////////////////////////
 
-
 #if !defined(FIT_EXD_DATA_FIELD_CONFIGURATION_MESG_LISTENER_HPP)
 #define FIT_EXD_DATA_FIELD_CONFIGURATION_MESG_LISTENER_HPP
 
 #include "fit_exd_data_field_configuration_mesg.hpp"
 
-namespace fit
-{
+namespace fit {
 
-class ExdDataFieldConfigurationMesgListener
-{
+class ExdDataFieldConfigurationMesgListener {
 public:
-    virtual ~ExdDataFieldConfigurationMesgListener() {}
-    virtual void OnMesg(ExdDataFieldConfigurationMesg& mesg) = 0;
+	virtual ~ExdDataFieldConfigurationMesgListener() {
+	}
+	virtual void OnMesg(ExdDataFieldConfigurationMesg &mesg) = 0;
 };
 
 } // namespace fit

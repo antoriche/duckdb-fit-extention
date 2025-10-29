@@ -9,48 +9,43 @@
 // Tag = production/release/21.171.0-0-g57fed75
 /////////////////////////////////////////////////////////////////////////////////////////////
 
-
 #include "fit_accumulator.hpp"
 
-namespace fit
-{
+namespace fit {
 
-FIT_UINT32 Accumulator::Accumulate(const FIT_UINT16 mesgNum, const FIT_UINT8 destFieldNum, const FIT_UINT32 value, const FIT_UINT8 bits)
-{
-   int i;
-   AccumulatedField accumField;
+FIT_UINT32 Accumulator::Accumulate(const FIT_UINT16 mesgNum, const FIT_UINT8 destFieldNum, const FIT_UINT32 value,
+                                   const FIT_UINT8 bits) {
+	int i;
+	AccumulatedField accumField;
 
-   for (i = 0; i < (int)fields.size(); i++)
-   {
-       accumField = fields.at(i);
-       if ( ( accumField.mesgNum == mesgNum ) && ( accumField.destFieldNum == destFieldNum ) )
-         break;
-   }
+	for (i = 0; i < (int)fields.size(); i++) {
+		accumField = fields.at(i);
+		if ((accumField.mesgNum == mesgNum) && (accumField.destFieldNum == destFieldNum))
+			break;
+	}
 
-   if (i == (int)fields.size()) {
-      fields.push_back(AccumulatedField(mesgNum, destFieldNum));
-   }
+	if (i == (int)fields.size()) {
+		fields.push_back(AccumulatedField(mesgNum, destFieldNum));
+	}
 
-   return fields[i].Accumulate(value, bits);
+	return fields[i].Accumulate(value, bits);
 }
 
-void Accumulator::Set(const FIT_UINT16 mesgNum, const FIT_UINT8 destFieldNum, const FIT_UINT32 value)
-{
-    int i;
-    AccumulatedField accumField;
+void Accumulator::Set(const FIT_UINT16 mesgNum, const FIT_UINT8 destFieldNum, const FIT_UINT32 value) {
+	int i;
+	AccumulatedField accumField;
 
-    for (i = 0; i < (int)fields.size(); i++)
-    {
-        accumField = fields.at(i);
-        if ( ( accumField.mesgNum == mesgNum ) && ( accumField.destFieldNum == destFieldNum ) )
-            break;
-    }
+	for (i = 0; i < (int)fields.size(); i++) {
+		accumField = fields.at(i);
+		if ((accumField.mesgNum == mesgNum) && (accumField.destFieldNum == destFieldNum))
+			break;
+	}
 
-    if (i == (int)fields.size()) {
-        accumField = AccumulatedField(mesgNum, destFieldNum);
-        fields.push_back(accumField);
-    }
-    fields[i].Set(value);
+	if (i == (int)fields.size()) {
+		accumField = AccumulatedField(mesgNum, destFieldNum);
+		fields.push_back(accumField);
+	}
+	fields[i].Set(value);
 }
 
 } // namespace fit

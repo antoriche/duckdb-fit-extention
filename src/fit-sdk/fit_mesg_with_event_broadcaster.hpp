@@ -9,7 +9,6 @@
 // Tag = production/release/21.171.0-0-g57fed75
 /////////////////////////////////////////////////////////////////////////////////////////////
 
-
 #if !defined(FIT_MESG_WITH_EVENT_BROADCASTER_HPP)
 #define FIT_MESG_WITH_EVENT_BROADCASTER_HPP
 
@@ -18,22 +17,20 @@
 #include "fit_mesg_with_event_listener.hpp"
 #include "fit_mesg_with_event.hpp"
 
-namespace fit
-{
+namespace fit {
 
-class MesgWithEventBroadcaster : public MesgWithEventListener
-{
+class MesgWithEventBroadcaster : public MesgWithEventListener {
 public:
-    MesgWithEventBroadcaster(void);
-    void AddListener(MesgWithEventListener& mesgObserver);
-    void RemoveListener(MesgWithEventListener& mesgObserver);
-    void OnMesg(MesgWithEvent& mesg);
+	MesgWithEventBroadcaster(void);
+	void AddListener(MesgWithEventListener &mesgObserver);
+	void RemoveListener(MesgWithEventListener &mesgObserver);
+	void OnMesg(MesgWithEvent &mesg);
 
 private:
-    void Broadcast(MesgWithEvent& mesg);
+	void Broadcast(MesgWithEvent &mesg);
 
-    std::vector<MesgWithEventListener*> listeners;
-    std::vector<std::list<MesgWithEvent*> > startedEvents;
+	std::vector<MesgWithEventListener *> listeners;
+	std::vector<std::list<MesgWithEvent *>> startedEvents;
 };
 
 } // namespace fit

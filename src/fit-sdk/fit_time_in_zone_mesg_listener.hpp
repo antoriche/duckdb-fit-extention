@@ -9,20 +9,18 @@
 // Tag = production/release/21.171.0-0-g57fed75
 /////////////////////////////////////////////////////////////////////////////////////////////
 
-
 #if !defined(FIT_TIME_IN_ZONE_MESG_LISTENER_HPP)
 #define FIT_TIME_IN_ZONE_MESG_LISTENER_HPP
 
 #include "fit_time_in_zone_mesg.hpp"
 
-namespace fit
-{
+namespace fit {
 
-class TimeInZoneMesgListener
-{
+class TimeInZoneMesgListener {
 public:
-    virtual ~TimeInZoneMesgListener() {}
-    virtual void OnMesg(TimeInZoneMesg& mesg) = 0;
+	virtual ~TimeInZoneMesgListener() {
+	}
+	virtual void OnMesg(TimeInZoneMesg &mesg) = 0;
 };
 
 } // namespace fit

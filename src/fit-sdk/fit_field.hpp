@@ -9,7 +9,6 @@
 // Tag = production/release/21.171.0-0-g57fed75
 /////////////////////////////////////////////////////////////////////////////////////////////
 
-
 #if !defined(FIELD_HPP)
 #define FIELD_HPP
 
@@ -21,49 +20,46 @@
 #include "fit_profile.hpp"
 #include "fit_field_base.hpp"
 
-namespace fit
-{
+namespace fit {
 
-class Field
-    : public FieldBase
-{
+class Field : public FieldBase {
 public:
-    Field(void);
-    Field(const Field &field);
-    Field(const Profile::MESG_INDEX mesgIndex, const FIT_UINT16 fieldIndex);
-    Field(const FIT_UINT16 mesgNum, const FIT_UINT8 fieldNum);
-    Field(const std::string& mesgName, const std::string& fieldName);
+	Field(void);
+	Field(const Field &field);
+	Field(const Profile::MESG_INDEX mesgIndex, const FIT_UINT16 fieldIndex);
+	Field(const FIT_UINT16 mesgNum, const FIT_UINT8 fieldNum);
+	Field(const std::string &mesgName, const std::string &fieldName);
 
-    FIT_UINT16 GetIndex(void) const;
-    FIT_BOOL GetIsExpanded(void) const;
-    void SetIsExpanded(FIT_BOOL newValue);
+	FIT_UINT16 GetIndex(void) const;
+	FIT_BOOL GetIsExpanded(void) const;
+	void SetIsExpanded(FIT_BOOL newValue);
 
-    virtual void SetBaseType( FIT_UINT8 type );
-    virtual FIT_BOOL IsValid(void) const override;
-    virtual FIT_BOOL GetIsAccumulated() const override;
-    virtual std::string GetName(void) const override;
-    virtual FIT_UINT8 GetNum(void) const override;
-    virtual FIT_UINT8 GetType(void) const override;
-    virtual std::string GetUnits(void) const override;
-    virtual FIT_FLOAT64 GetScale(void) const override;
-    virtual FIT_FLOAT64 GetOffset(void) const override;
-    virtual FIT_UINT16 GetNumComponents(void) const override;
-    virtual FIT_UINT16 GetNumSubFields(void) const override;
-    virtual const Profile::FIELD_COMPONENT* GetComponent(const FIT_UINT16 component) const override;
-    virtual const Profile::SUBFIELD* GetSubField(const FIT_UINT16 subFieldIndex) const override;
+	virtual void SetBaseType(FIT_UINT8 type);
+	virtual FIT_BOOL IsValid(void) const override;
+	virtual FIT_BOOL GetIsAccumulated() const override;
+	virtual std::string GetName(void) const override;
+	virtual FIT_UINT8 GetNum(void) const override;
+	virtual FIT_UINT8 GetType(void) const override;
+	virtual std::string GetUnits(void) const override;
+	virtual FIT_FLOAT64 GetScale(void) const override;
+	virtual FIT_FLOAT64 GetOffset(void) const override;
+	virtual FIT_UINT16 GetNumComponents(void) const override;
+	virtual FIT_UINT16 GetNumSubFields(void) const override;
+	virtual const Profile::FIELD_COMPONENT *GetComponent(const FIT_UINT16 component) const override;
+	virtual const Profile::SUBFIELD *GetSubField(const FIT_UINT16 subFieldIndex) const override;
 
-    // Unhide the overloaded get methods from FieldBase.
-    using FieldBase::GetName;
-    using FieldBase::GetType;
-    using FieldBase::GetUnits;
-    using FieldBase::GetScale;
-    using FieldBase::GetOffset;
+	// Unhide the overloaded get methods from FieldBase.
+	using FieldBase::GetName;
+	using FieldBase::GetOffset;
+	using FieldBase::GetScale;
+	using FieldBase::GetType;
+	using FieldBase::GetUnits;
 
 private:
-    const Profile::MESG* profile;
-    FIT_UINT16 profileIndex;
-    FIT_UINT8 type;
-    FIT_BOOL isFieldExpanded;
+	const Profile::MESG *profile;
+	FIT_UINT16 profileIndex;
+	FIT_UINT8 type;
+	FIT_BOOL isFieldExpanded;
 };
 
 } // namespace fit

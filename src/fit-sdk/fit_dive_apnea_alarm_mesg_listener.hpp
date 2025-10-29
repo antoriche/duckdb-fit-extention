@@ -9,20 +9,18 @@
 // Tag = production/release/21.171.0-0-g57fed75
 /////////////////////////////////////////////////////////////////////////////////////////////
 
-
 #if !defined(FIT_DIVE_APNEA_ALARM_MESG_LISTENER_HPP)
 #define FIT_DIVE_APNEA_ALARM_MESG_LISTENER_HPP
 
 #include "fit_dive_apnea_alarm_mesg.hpp"
 
-namespace fit
-{
+namespace fit {
 
-class DiveApneaAlarmMesgListener
-{
+class DiveApneaAlarmMesgListener {
 public:
-    virtual ~DiveApneaAlarmMesgListener() {}
-    virtual void OnMesg(DiveApneaAlarmMesg& mesg) = 0;
+	virtual ~DiveApneaAlarmMesgListener() {
+	}
+	virtual void OnMesg(DiveApneaAlarmMesg &mesg) = 0;
 };
 
 } // namespace fit

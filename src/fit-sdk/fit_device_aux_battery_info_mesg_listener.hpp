@@ -9,20 +9,18 @@
 // Tag = production/release/21.171.0-0-g57fed75
 /////////////////////////////////////////////////////////////////////////////////////////////
 
-
 #if !defined(FIT_DEVICE_AUX_BATTERY_INFO_MESG_LISTENER_HPP)
 #define FIT_DEVICE_AUX_BATTERY_INFO_MESG_LISTENER_HPP
 
 #include "fit_device_aux_battery_info_mesg.hpp"
 
-namespace fit
-{
+namespace fit {
 
-class DeviceAuxBatteryInfoMesgListener
-{
+class DeviceAuxBatteryInfoMesgListener {
 public:
-    virtual ~DeviceAuxBatteryInfoMesgListener() {}
-    virtual void OnMesg(DeviceAuxBatteryInfoMesg& mesg) = 0;
+	virtual ~DeviceAuxBatteryInfoMesgListener() {
+	}
+	virtual void OnMesg(DeviceAuxBatteryInfoMesg &mesg) = 0;
 };
 
 } // namespace fit

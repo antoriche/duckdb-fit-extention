@@ -9,20 +9,18 @@
 // Tag = production/release/21.171.0-0-g57fed75
 /////////////////////////////////////////////////////////////////////////////////////////////
 
-
 #if !defined(FIT_CONNECTIVITY_MESG_LISTENER_HPP)
 #define FIT_CONNECTIVITY_MESG_LISTENER_HPP
 
 #include "fit_connectivity_mesg.hpp"
 
-namespace fit
-{
+namespace fit {
 
-class ConnectivityMesgListener
-{
+class ConnectivityMesgListener {
 public:
-    virtual ~ConnectivityMesgListener() {}
-    virtual void OnMesg(ConnectivityMesg& mesg) = 0;
+	virtual ~ConnectivityMesgListener() {
+	}
+	virtual void OnMesg(ConnectivityMesg &mesg) = 0;
 };
 
 } // namespace fit

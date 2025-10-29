@@ -9,20 +9,18 @@
 // Tag = production/release/21.171.0-0-g57fed75
 /////////////////////////////////////////////////////////////////////////////////////////////
 
-
 #if !defined(FIT_FACTORY_HPP)
 #define FIT_FACTORY_HPP
 
 #include <string>
 #include "fit_mesg.hpp"
 
-namespace fit
-{
+namespace fit {
 
-class Factory
-{
+class Factory {
 public:
-    static Mesg CreateMesg(Mesg mesg);
+	static Mesg CreateMesg(Mesg mesg);
+
 private:
 };
 

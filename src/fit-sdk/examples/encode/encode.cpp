@@ -26,16 +26,13 @@
 // Number of semicircles per meter at the equator
 #define SC_PER_M 107.173
 
-int EncodeActivityFile()
-{
-	try
-	{
+int EncodeActivityFile() {
+	try {
 		// Open the file
 		std::fstream file;
 		file.open("ExampleActivity.fit", std::ios::in | std::ios::out | std::ios::binary | std::ios::trunc);
 
-		if (!file.is_open())
-		{
+		if (!file.is_open()) {
 			printf("Error opening file ExampleActivity.fit\n");
 			return -1;
 		}
@@ -64,9 +61,9 @@ int EncodeActivityFile()
 		fit::DeveloperDataIdMesg developerIdMesg;
 		// It is a BEST PRACTICE to use the same Guid for all FIT files created by your platform
 		// 00010203-0405-0607-0809-0A0B0C0D0E0F
-		FIT_UINT8 appId[] = { 0x03,0x02,0x01,0x00,0x05,0x04,0x07,0x06,0x08,0x09,0x0a,0x0b,0x0c,0x0d,0x0e,0x0f };
-		for (FIT_UINT8 i = 0; i < 16; i++)
-		{
+		FIT_UINT8 appId[] = {0x03, 0x02, 0x01, 0x00, 0x05, 0x04, 0x07, 0x06,
+		                     0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f};
+		for (FIT_UINT8 i = 0; i < 16; i++) {
 			developerIdMesg.SetApplicationId(i, appId[i]);
 		}
 		developerIdMesg.SetDeveloperDataIndex(0);
@@ -104,19 +101,18 @@ int EncodeActivityFile()
 		fit::DateTime timestamp(startTime);
 
 		// Create one hour (3600 seconds) of Record data
-		for (FIT_UINT16 i = 0; i < 3600; i++)
-		{
+		for (FIT_UINT16 i = 0; i < 3600; i++) {
 			// Create a new Record message and set the timestamp
 			fit::RecordMesg recordMesg;
 			recordMesg.SetTimestamp(timestamp.GetTimeStamp());
 
 			// Fake Record Data of Various Signal Patterns
-			recordMesg.SetDistance(i); // Ramp
-			recordMesg.SetSpeed(1); // Flatline
+			recordMesg.SetDistance(i);                                                          // Ramp
+			recordMesg.SetSpeed(1);                                                             // Flatline
 			recordMesg.SetHeartRate((FIT_UINT8)((sin(TWOPI * (0.01 * i + 10)) + 1.0) * 127.0)); // Sine
-			recordMesg.SetCadence((FIT_UINT8)(i % 255)); // Sawtooth
-			recordMesg.SetPower((FIT_UINT16)((i % 255) < 127 ? 150 : 250)); // Square
-			recordMesg.SetAltitude((float)std::abs(((float)(i % 255)) - 127.0f)); // Triangle
+			recordMesg.SetCadence((FIT_UINT8)(i % 255));                                        // Sawtooth
+			recordMesg.SetPower((FIT_UINT16)((i % 255) < 127 ? 150 : 250));                     // Square
+			recordMesg.SetAltitude((float)std::abs(((float)(i % 255)) - 127.0f));               // Triangle
 			recordMesg.SetPositionLat(0);
 			recordMesg.SetPositionLong((FIT_SINT32)(i * SC_PER_M));
 
@@ -173,8 +169,7 @@ int EncodeActivityFile()
 		encode.Write(activityMesg);
 
 		// Update the data size in the header and calculate the CRC
-		if (!encode.Close())
-		{
+		if (!encode.Close()) {
 			printf("Error closing encode.\n");
 			return -1;
 		}
@@ -184,23 +179,18 @@ int EncodeActivityFile()
 
 		printf("Encoded FIT file ExampleActivity.fit.\n");
 		return 0;
-	}
-	catch (...)
-	{
+	} catch (...) {
 		throw std::exception("Exception encoding activity file");
 	}
 }
-int EncodeSettingsFile()
-{
-	try
-	{
+int EncodeSettingsFile() {
+	try {
 		fit::Encode encode(fit::ProtocolVersion::V10);
 		std::fstream file;
 
 		file.open("ExampleSettings.fit", std::ios::in | std::ios::out | std::ios::binary | std::ios::trunc);
 
-		if (!file.is_open())
-		{
+		if (!file.is_open()) {
 			printf("Error opening file ExampleSettings.fit\n");
 			return -1;
 		}
@@ -222,8 +212,7 @@ int EncodeSettingsFile()
 		encode.Write(fileIdMesg);
 		encode.Write(userProfileMesg);
 
-		if (!encode.Close())
-		{
+		if (!encode.Close()) {
 			printf("Error closing encode.\n");
 			return -1;
 		}
@@ -231,17 +220,13 @@ int EncodeSettingsFile()
 
 		printf("Encoded FIT file ExampleSettings.fit.\n");
 		return 0;
-	}
-	catch (...)
-	{
+	} catch (...) {
 		throw std::exception("Exception encoding settings file.");
 	}
 }
 
-int EncodeMonitoringFile()
-{
-	try
-	{
+int EncodeMonitoringFile() {
+	try {
 		fit::Encode encode(fit::ProtocolVersion::V10);
 		std::fstream file;
 
@@ -250,8 +235,7 @@ int EncodeMonitoringFile()
 
 		file.open("ExampleMonitoringFile.fit", std::ios::in | std::ios::out | std::ios::binary | std::ios::trunc);
 
-		if (!file.is_open())
-		{
+		if (!file.is_open()) {
 			printf("Error opening file ExampleMonitoringFile.fit\n");
 			return -1;
 		}
@@ -274,33 +258,34 @@ int EncodeMonitoringFile()
 
 		fit::MonitoringMesg monitoringMesg;
 
-		// By default, each time a new message is written the Local Message Type 0 will be redefined to match the new message.
-		// In this case,to avoid having a definition message each time there is a DeviceInfoMesg, we can manually set the Local Message Type of the MonitoringMessage to '1'.
-		// By doing this we avoid an additional 7 definition messages in our FIT file.
+		// By default, each time a new message is written the Local Message Type 0 will be redefined to match the new
+		// message. In this case,to avoid having a definition message each time there is a DeviceInfoMesg, we can
+		// manually set the Local Message Type of the MonitoringMessage to '1'. By doing this we avoid an additional 7
+		// definition messages in our FIT file.
 		monitoringMesg.SetLocalNum(1);
 
 		monitoringMesg.SetTimestamp(initTime.GetTimeStamp()); // Initialise Timestamp to now
-		monitoringMesg.SetCycles(0); // Initialise Cycles to 0
-		for (int i = 0; i < 4; i++) // This loop represents 1/6 of a day
+		monitoringMesg.SetCycles(0);                          // Initialise Cycles to 0
+		for (int i = 0; i < 4; i++)                           // This loop represents 1/6 of a day
 		{
 			for (int j = 0; j < 4; j++) // Each one of these loops represent 1 hour
 			{
 				fit::DateTime walkingTime(current_time_unix);
 				monitoringMesg.SetTimestamp(walkingTime.GetTimeStamp());
-				monitoringMesg.SetActivityType(FIT_ACTIVITY_TYPE_WALKING); // By setting this to WALKING, the Cycles field will be interpretted as Steps
-				monitoringMesg.SetCycles(monitoringMesg.GetCycles() + (rand() % 1000 + 1)); // Cycles are accumulated (i.e. must be increasing)
+				monitoringMesg.SetActivityType(FIT_ACTIVITY_TYPE_WALKING); // By setting this to WALKING, the Cycles
+				                                                           // field will be interpretted as Steps
+				monitoringMesg.SetCycles(monitoringMesg.GetCycles() +
+				                         (rand() % 1000 + 1)); // Cycles are accumulated (i.e. must be increasing)
 				encode.Write(monitoringMesg);
-				current_time_unix += (time_t)(3600); //Add an hour to our contrieved timestamp
+				current_time_unix += (time_t)(3600); // Add an hour to our contrieved timestamp
 			}
 			fit::DateTime statusTime(current_time_unix);
 			deviceInfoMesg.SetTimestamp(statusTime.GetTimeStamp());
 			deviceInfoMesg.SetBatteryStatus(FIT_BATTERY_STATUS_GOOD);
 			encode.Write(deviceInfoMesg);
-
 		}
 
-		if (!encode.Close())
-		{
+		if (!encode.Close()) {
 			printf("Error closing encode.\n");
 			return -1;
 		}
@@ -308,30 +293,24 @@ int EncodeMonitoringFile()
 
 		printf("Encoded FIT file ExampleMonitoringFile.fit.\n");
 		return 0;
-	}
-	catch (...)
-	{
+	} catch (...) {
 		throw std::exception("Exception encoding monitoring file.");
 	}
 }
 
-int main()
-{
-    printf("FIT Encode Example Application\n");
+int main() {
+	printf("FIT Encode Example Application\n");
 
-    int returnValue = 0;
+	int returnValue = 0;
 
-	try
-	{
+	try {
 		returnValue += EncodeSettingsFile();
 		returnValue += EncodeMonitoringFile();
 		returnValue += EncodeActivityFile();
-	}
-	catch (const std::exception &e)
-	{
+	} catch (const std::exception &e) {
 		printf("Exception occurred while encoding example files: %s", e.what());
 		return -1;
 	}
 
-    return returnValue;
+	return returnValue;
 }

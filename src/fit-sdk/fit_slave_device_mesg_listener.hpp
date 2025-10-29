@@ -9,20 +9,18 @@
 // Tag = production/release/21.171.0-0-g57fed75
 /////////////////////////////////////////////////////////////////////////////////////////////
 
-
 #if !defined(FIT_SLAVE_DEVICE_MESG_LISTENER_HPP)
 #define FIT_SLAVE_DEVICE_MESG_LISTENER_HPP
 
 #include "fit_slave_device_mesg.hpp"
 
-namespace fit
-{
+namespace fit {
 
-class SlaveDeviceMesgListener
-{
+class SlaveDeviceMesgListener {
 public:
-    virtual ~SlaveDeviceMesgListener() {}
-    virtual void OnMesg(SlaveDeviceMesg& mesg) = 0;
+	virtual ~SlaveDeviceMesgListener() {
+	}
+	virtual void OnMesg(SlaveDeviceMesg &mesg) = 0;
 };
 
 } // namespace fit

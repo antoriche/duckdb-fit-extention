@@ -9,20 +9,18 @@
 // Tag = production/release/21.171.0-0-g57fed75
 /////////////////////////////////////////////////////////////////////////////////////////////
 
-
 #if !defined(FIT_DIVE_SUMMARY_MESG_LISTENER_HPP)
 #define FIT_DIVE_SUMMARY_MESG_LISTENER_HPP
 
 #include "fit_dive_summary_mesg.hpp"
 
-namespace fit
-{
+namespace fit {
 
-class DiveSummaryMesgListener
-{
+class DiveSummaryMesgListener {
 public:
-    virtual ~DiveSummaryMesgListener() {}
-    virtual void OnMesg(DiveSummaryMesg& mesg) = 0;
+	virtual ~DiveSummaryMesgListener() {
+	}
+	virtual void OnMesg(DiveSummaryMesg &mesg) = 0;
 };
 
 } // namespace fit

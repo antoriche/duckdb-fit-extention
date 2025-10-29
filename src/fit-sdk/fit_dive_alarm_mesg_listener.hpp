@@ -9,20 +9,18 @@
 // Tag = production/release/21.171.0-0-g57fed75
 /////////////////////////////////////////////////////////////////////////////////////////////
 
-
 #if !defined(FIT_DIVE_ALARM_MESG_LISTENER_HPP)
 #define FIT_DIVE_ALARM_MESG_LISTENER_HPP
 
 #include "fit_dive_alarm_mesg.hpp"
 
-namespace fit
-{
+namespace fit {
 
-class DiveAlarmMesgListener
-{
+class DiveAlarmMesgListener {
 public:
-    virtual ~DiveAlarmMesgListener() {}
-    virtual void OnMesg(DiveAlarmMesg& mesg) = 0;
+	virtual ~DiveAlarmMesgListener() {
+	}
+	virtual void OnMesg(DiveAlarmMesg &mesg) = 0;
 };
 
 } // namespace fit
