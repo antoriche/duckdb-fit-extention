@@ -1,0 +1,33 @@
+# CMakeLists.txt additions for refactored FIT extension
+# Add this to your existing CMakeLists.txt
+
+# New source files to add:
+set(EXTENSION_SOURCES
+    # Core types
+    src/fit_types.cpp
+
+    # Utilities
+    src/fit_glob.cpp
+    src/utils.cpp
+
+    # Data collection
+    src/fit_collector.cpp
+
+    # Table function base
+    src/fit_table_base.cpp
+
+    # Individual table functions
+    src/fit_records_table.cpp
+    src/fit_activities_table.cpp
+    src/fit_sessions_table.cpp
+    src/fit_laps_table.cpp
+    src/fit_devices_table.cpp
+    src/fit_events_table.cpp
+    src/fit_users_table.cpp
+
+    # Main extension (simplified)
+    src/fit_extension.cpp  # or fit_extension_new.cpp initially
+)
+
+# Note: The FIT SDK sources in src/fit-sdk/ should remain as before
+# Note: Include directories should include src/include/ for the new headers
