@@ -51,7 +51,8 @@
         "vector": "cpp",
         "*.test": "sql",
         "*.fit": "binary",
-        "*.cmake": "cmake"
+        "*.cmake": "cmake",
+        "string": "cpp"
     },
 
     // SQL Settings

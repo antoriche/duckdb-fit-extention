@@ -27,8 +27,76 @@
 #include <fstream>
 #include <vector>
 #include <memory>
+#include <algorithm>
+#include <fnmatch.h>
+#include <dirent.h>
+#include <sys/stat.h>
 
 namespace duckdb {
+
+// Helper function to expand glob patterns
+static vector<string> ExpandGlobPattern(const string &pattern) {
+	vector<string> files;
+
+	// Check if pattern contains wildcards
+	if (pattern.find('*') == string::npos && pattern.find('?') == string::npos && pattern.find('[') == string::npos) {
+		// No wildcards, just return the single file
+		files.push_back(pattern);
+		return files;
+	}
+
+	// Extract directory and filename pattern
+	size_t last_slash = pattern.find_last_of('/');
+	string dir_path;
+	string filename_pattern;
+
+	if (last_slash != string::npos) {
+		dir_path = pattern.substr(0, last_slash);
+		filename_pattern = pattern.substr(last_slash + 1);
+	} else {
+		dir_path = ".";
+		filename_pattern = pattern;
+	}
+
+	// Open directory
+	DIR *dir = opendir(dir_path.c_str());
+	if (!dir) {
+		return files; // Return empty vector if directory doesn't exist
+	}
+
+	// Read directory entries
+	struct dirent *entry;
+	while ((entry = readdir(dir)) != nullptr) {
+		// Skip . and .. entries
+		if (strcmp(entry->d_name, ".") == 0 || strcmp(entry->d_name, "..") == 0) {
+			continue;
+		}
+
+		// Check if it matches the pattern
+		if (fnmatch(filename_pattern.c_str(), entry->d_name, 0) == 0) {
+			// Construct full path
+			string full_path;
+			if (dir_path == ".") {
+				full_path = entry->d_name;
+			} else {
+				full_path = dir_path + "/" + entry->d_name;
+			}
+
+			// Check if it's a regular file
+			struct stat statbuf;
+			if (stat(full_path.c_str(), &statbuf) == 0 && S_ISREG(statbuf.st_mode)) {
+				files.push_back(full_path);
+			}
+		}
+	}
+
+	closedir(dir);
+
+	// Sort files for consistent ordering
+	std::sort(files.begin(), files.end());
+
+	return files;
+}
 
 // Structure to hold FIT record data - aligned with documentation
 struct FitRecord {
@@ -146,6 +214,9 @@ struct FitRecord {
 	// Device info
 	uint8_t device_index;
 
+	// File source information
+	string file_source;
+
 	// Initialize all fields to invalid/zero values
 	FitRecord()
 	    : timestamp(timestamp_tz_t()), latitude(0.0), longitude(0.0), altitude(0.0), enhanced_altitude(0.0),
@@ -163,7 +234,7 @@ struct FitRecord {
 	      ebike_assist_mode(0), ebike_assist_level_percent(0), battery_soc(0.0), ball_speed(0.0), absolute_pressure(0),
 	      depth(0.0), next_stop_depth(0.0), next_stop_time(0), time_to_surface(0), ndl_time(0), cns_load(0), n2_load(0),
 	      air_time_remaining(0), pressure_sac(0.0), volume_sac(0.0), rmv(0.0), ascent_rate(0.0), po2(0.0),
-	      respiration_rate(0), enhanced_respiration_rate(0.0), device_index(0) {
+	      respiration_rate(0), enhanced_respiration_rate(0.0), device_index(0), file_source("") {
 	}
 };
 
@@ -198,6 +269,7 @@ struct FitActivity {
 	double start_position_long;
 	double end_position_lat;
 	double end_position_long;
+	string file_source;
 
 	FitActivity()
 	    : activity_id(0), file_id(""), timestamp(timestamp_tz_t()), local_timestamp(timestamp_tz_t()),
@@ -205,7 +277,8 @@ struct FitActivity {
 	      sub_sport(""), manufacturer(""), product(""), device_serial_number(0), software_version(""),
 	      total_calories(0), total_ascent(0.0), total_descent(0.0), avg_heart_rate(0), max_heart_rate(0),
 	      avg_speed(0.0), max_speed(0.0), avg_power(0), max_power(0), avg_cadence(0), max_cadence(0),
-	      start_position_lat(0.0), start_position_long(0.0), end_position_lat(0.0), end_position_long(0.0) {
+	      start_position_lat(0.0), start_position_long(0.0), end_position_lat(0.0), end_position_long(0.0),
+	      file_source("") {
 	}
 };
 
@@ -241,6 +314,7 @@ struct FitSession {
 	string event;
 	string event_type;
 	string trigger;
+	string file_source;
 
 	FitSession()
 	    : session_id(0), activity_id(0), timestamp(timestamp_tz_t()), start_time(timestamp_tz_t()),
@@ -248,7 +322,7 @@ struct FitSession {
 	      total_calories(0), avg_speed(0.0), max_speed(0.0), avg_heart_rate(0), max_heart_rate(0), min_heart_rate(0),
 	      avg_cadence(0), max_cadence(0), avg_power(0), max_power(0), normalized_power(0), intensity_factor(0.0),
 	      training_stress_score(0.0), total_work(0), total_ascent(0.0), total_descent(0.0), first_lap_index(0),
-	      num_laps(0), event(""), event_type(""), trigger("") {
+	      num_laps(0), event(""), event_type(""), trigger(""), file_source("") {
 	}
 };
 
@@ -281,13 +355,15 @@ struct FitLap {
 	double start_position_long;
 	double end_position_lat;
 	double end_position_long;
+	string file_source;
 
 	FitLap()
 	    : lap_id(0), session_id(0), activity_id(0), timestamp(timestamp_tz_t()), start_time(timestamp_tz_t()),
 	      total_elapsed_time(0.0), total_timer_time(0.0), total_distance(0.0), total_calories(0), avg_speed(0.0),
 	      max_speed(0.0), avg_heart_rate(0), max_heart_rate(0), min_heart_rate(0), avg_cadence(0), max_cadence(0),
 	      avg_power(0), max_power(0), total_ascent(0.0), total_descent(0.0), lap_trigger(""), event(""), event_type(""),
-	      start_position_lat(0.0), start_position_long(0.0), end_position_lat(0.0), end_position_long(0.0) {
+	      start_position_lat(0.0), start_position_long(0.0), end_position_lat(0.0), end_position_long(0.0),
+	      file_source("") {
 	}
 };
 
@@ -312,12 +388,13 @@ struct FitDevice {
 	string source_type;
 	string product_name;
 	double battery_voltage;
+	string file_source;
 
 	FitDevice()
 	    : device_id(0), activity_id(0), device_index(0), device_type(""), manufacturer(""), product(""),
 	      serial_number(0), software_version(""), hardware_version(""), cum_operating_time(0), battery_status(""),
 	      sensor_position(""), descriptor(""), ant_transmission_type(0), ant_device_number(0), ant_network(""),
-	      source_type(""), product_name(""), battery_voltage(0.0) {
+	      source_type(""), product_name(""), battery_voltage(0.0), file_source("") {
 	}
 };
 
@@ -339,11 +416,12 @@ struct FitEvent {
 	uint8_t device_index;
 	string activity_type;
 	timestamp_tz_t start_timestamp;
+	string file_source;
 
 	FitEvent()
 	    : event_id(0), activity_id(0), timestamp(timestamp_tz_t()), event(""), event_type(""), data(0), data16(0),
 	      score(0), opponent_score(0), front_gear_num(0), front_gear(0), rear_gear_num(0), rear_gear(0),
-	      device_index(0), activity_type(""), start_timestamp(timestamp_tz_t()) {
+	      device_index(0), activity_type(""), start_timestamp(timestamp_tz_t()), file_source("") {
 	}
 };
 
@@ -377,6 +455,7 @@ struct FitUser {
 	string weight_setting;
 	uint8_t resting_heart_rate;
 	uint8_t default_max_swimming_hr;
+	string file_source;
 
 	FitUser()
 	    : user_id(0), gender(""), age(0), height(0.0), weight(0.0), language(""), time_zone(0), activity_class(0.0),
@@ -384,7 +463,7 @@ struct FitUser {
 	      default_max_running_hr(0), default_max_biking_hr(0), default_max_hr(0), hr_setting(""), speed_setting(""),
 	      dist_setting(""), power_setting(""), position_setting(""), temperature_setting(""), local_id(0), global_id(0),
 	      wake_time(0), sleep_time(0), height_setting(""), weight_setting(""), resting_heart_rate(0),
-	      default_max_swimming_hr(0) {
+	      default_max_swimming_hr(0), file_source("") {
 	}
 };
 
@@ -409,8 +488,14 @@ public:
 	string manufacturer;
 	string activity_name;
 	string current_activity_type; // Track current activity type for records
+	string current_file_source;   // Track current file being processed
 
-	FitDataCollector() : current_activity_type("") {
+	FitDataCollector() : current_activity_type(""), current_file_source("") {
+	}
+
+	// Method to set the current file being processed
+	void SetCurrentFile(const string &file_path) {
+		current_file_source = file_path;
 	}
 
 	void OnMesg(fit::RecordMesg &record) override {
@@ -690,6 +775,7 @@ public:
 
 		// Set activity type from current session
 		fitRecord.activity_type = current_activity_type;
+		fitRecord.file_source = current_file_source;
 
 		records.push_back(fitRecord);
 	}
@@ -729,6 +815,7 @@ public:
 			activity.device_serial_number = file_id.GetSerialNumber();
 		}
 
+		activity.file_source = current_file_source;
 		activities.push_back(activity);
 	}
 
@@ -857,6 +944,7 @@ public:
 			fit_session.num_laps = session.GetNumLaps();
 		}
 
+		fit_session.file_source = current_file_source;
 		sessions.push_back(fit_session);
 	}
 
@@ -971,6 +1059,7 @@ public:
 			}
 		}
 
+		fit_lap.file_source = current_file_source;
 		laps.push_back(fit_lap);
 	}
 
@@ -1054,6 +1143,7 @@ public:
 			fit_device.battery_voltage = device_info.GetBatteryVoltage() / 256.0;
 		}
 
+		fit_device.file_source = current_file_source;
 		devices.push_back(fit_device);
 	}
 
@@ -1118,6 +1208,7 @@ public:
 			fit_event.device_index = event.GetDeviceIndex();
 		}
 
+		fit_event.file_source = current_file_source;
 		events.push_back(fit_event);
 	}
 
@@ -1223,6 +1314,7 @@ public:
 		// Note: DefaultMaxSwimmingHr field may not be available in this SDK version
 		// Skip for now
 
+		fit_user.file_source = current_file_source;
 		users.push_back(fit_user);
 	}
 };
@@ -1256,36 +1348,100 @@ struct FitTableFunctionData : public TableFunctionData {
 private:
 	void LoadFitFile() {
 		try {
-			std::fstream file;
-			file.open(input_name, std::ios::in | std::ios::binary);
-
-			if (!file.is_open()) {
-				throw std::runtime_error("Cannot open FIT file: " + input_name);
+			// Check for empty or null input
+			if (input_name.empty()) {
+				throw std::runtime_error("File path cannot be empty");
 			}
 
-			fit::Decode decode;
-			fit::MesgBroadcaster mesgBroadcaster;
+			// Expand glob pattern to get list of files
+			vector<string> files = ExpandGlobPattern(input_name);
+
+			// Check if pattern contains wildcards
+			bool has_wildcards = (input_name.find('*') != string::npos || input_name.find('?') != string::npos ||
+			                      input_name.find('[') != string::npos);
+
+			if (files.empty()) {
+				if (has_wildcards) {
+					// For wildcard patterns, return an empty result (valid schema, 0 rows)
+					fit_records.clear();
+					fit_activities.clear();
+					fit_sessions.clear();
+					fit_laps.clear();
+					fit_devices.clear();
+					fit_events.clear();
+					fit_users.clear();
+					return;
+				} else {
+					// For non-wildcard patterns, throw a more specific error
+					throw std::runtime_error("Cannot open FIT file: " + input_name);
+				}
+			}
+
+			// For non-wildcard patterns, validate the single file exists and is readable
+			if (!has_wildcards && files.size() == 1) {
+				std::fstream test_file;
+				test_file.open(files[0], std::ios::in | std::ios::binary);
+				if (!test_file.is_open()) {
+					throw std::runtime_error("Cannot open FIT file: " + input_name);
+				}
+				test_file.close();
+			}
+
+			// Create shared collector that will accumulate data from all files
 			FitDataCollector collector;
 
-			// Check file integrity
-			if (!decode.CheckIntegrity(file)) {
-				// Continue anyway, might still be readable
+			// Process each file
+			for (const auto &file_path : files) {
+				try {
+					std::fstream file;
+					file.open(file_path, std::ios::in | std::ios::binary);
+
+					if (!file.is_open()) {
+						if (!has_wildcards) {
+							// For single files, this is an error
+							throw std::runtime_error("Cannot open FIT file: " + file_path);
+						}
+						// For wildcard patterns, skip files that can't be opened
+						continue;
+					}
+
+					// Set current file in collector
+					collector.SetCurrentFile(file_path);
+
+					fit::Decode decode;
+					fit::MesgBroadcaster mesgBroadcaster;
+
+					// Check file integrity
+					if (!decode.CheckIntegrity(file)) {
+						// Continue anyway, might still be readable
+					}
+
+					// Add listeners for all message types
+					mesgBroadcaster.AddListener((fit::RecordMesgListener &)collector);
+					mesgBroadcaster.AddListener((fit::FileIdMesgListener &)collector);
+					mesgBroadcaster.AddListener((fit::ActivityMesgListener &)collector);
+					mesgBroadcaster.AddListener((fit::SessionMesgListener &)collector);
+					mesgBroadcaster.AddListener((fit::LapMesgListener &)collector);
+					mesgBroadcaster.AddListener((fit::DeviceInfoMesgListener &)collector);
+					mesgBroadcaster.AddListener((fit::EventMesgListener &)collector);
+					mesgBroadcaster.AddListener((fit::UserProfileMesgListener &)collector);
+
+					// Decode the file
+					decode.Read(&file, &mesgBroadcaster, &mesgBroadcaster, nullptr);
+
+					file.close();
+
+				} catch (const std::exception &e) {
+					if (!has_wildcards) {
+						// For single files, propagate the error
+						throw std::runtime_error("Error reading FIT file '" + file_path + "': " + string(e.what()));
+					}
+					// For wildcard patterns, continue with next file if one fails
+					continue;
+				}
 			}
 
-			// Add listeners for all message types
-			mesgBroadcaster.AddListener((fit::RecordMesgListener &)collector);
-			mesgBroadcaster.AddListener((fit::FileIdMesgListener &)collector);
-			mesgBroadcaster.AddListener((fit::ActivityMesgListener &)collector);
-			mesgBroadcaster.AddListener((fit::SessionMesgListener &)collector);
-			mesgBroadcaster.AddListener((fit::LapMesgListener &)collector);
-			mesgBroadcaster.AddListener((fit::DeviceInfoMesgListener &)collector);
-			mesgBroadcaster.AddListener((fit::EventMesgListener &)collector);
-			mesgBroadcaster.AddListener((fit::UserProfileMesgListener &)collector);
-
-			// Decode the file
-			decode.Read(&file, &mesgBroadcaster, &mesgBroadcaster, nullptr);
-
-			// Copy collected data
+			// Copy collected data from all files
 			fit_records = std::move(collector.records);
 			fit_activities = std::move(collector.activities);
 			fit_sessions = std::move(collector.sessions);
@@ -1295,56 +1451,79 @@ private:
 			fit_users = std::move(collector.users);
 
 			// Post-process: populate activity_type from session data
+			// This is now done per file, but we keep this for backward compatibility
 			if (!fit_sessions.empty() && !fit_records.empty()) {
-				// Get the sport from the first session (most FIT files have one session)
-				string activity_type_str = "";
-				if (!fit_sessions[0].sport.empty()) {
-					// Sport is now already a human-readable string
-					activity_type_str = fit_sessions[0].sport;
+				// Group records by file source and apply activity types accordingly
+				std::map<string, string> file_activity_types;
+
+				// Build mapping of file -> activity type from sessions
+				for (const auto &session : fit_sessions) {
+					if (!session.sport.empty() && !session.file_source.empty()) {
+						file_activity_types[session.file_source] = session.sport;
+					}
 				}
 
-				// Apply the activity type to all records
+				// Apply activity types to records based on their file source
 				for (auto &record : fit_records) {
-					record.activity_type = activity_type_str;
+					if (file_activity_types.find(record.file_source) != file_activity_types.end()) {
+						record.activity_type = file_activity_types[record.file_source];
+					}
 				}
 			}
 
 			// Post-process: populate activities with session data
 			if (!fit_sessions.empty() && !fit_activities.empty()) {
-				// Copy data from the first session to the first activity
-				// Most FIT files have one activity and one session
-				auto &session = fit_sessions[0];
-				auto &activity = fit_activities[0];
+				// Group by file source and match sessions to activities
+				std::map<string, std::vector<FitSession *>> file_sessions;
+				std::map<string, std::vector<FitActivity *>> file_activities;
 
-				// Copy sport information
-				activity.sport = session.sport;
-				activity.sub_sport = session.sub_sport;
+				for (auto &session : fit_sessions) {
+					file_sessions[session.file_source].push_back(&session);
+				}
+				for (auto &activity : fit_activities) {
+					file_activities[activity.file_source].push_back(&activity);
+				}
 
-				// Copy performance data
-				activity.total_distance = session.total_distance;
-				activity.total_elapsed_time = session.total_elapsed_time;
-				activity.total_calories = session.total_calories;
-				activity.avg_heart_rate = session.avg_heart_rate;
-				activity.max_heart_rate = session.max_heart_rate;
-				activity.avg_speed = session.avg_speed;
-				activity.max_speed = session.max_speed;
-				activity.avg_power = session.avg_power;
-				activity.max_power = session.max_power;
-				activity.avg_cadence = session.avg_cadence;
-				activity.max_cadence = session.max_cadence;
-				activity.total_ascent = session.total_ascent;
-				activity.total_descent = session.total_descent;
+				// Match sessions to activities within each file
+				for (const auto &file_pair : file_activities) {
+					const string &file_source = file_pair.first;
+					auto &activities = file_pair.second;
 
-				// Copy start time if not already set
-				if (activity.start_time.value == 0 && session.start_time.value != 0) {
-					activity.start_time = session.start_time;
+					if (file_sessions.find(file_source) != file_sessions.end() && !file_sessions[file_source].empty() &&
+					    !activities.empty()) {
+
+						auto &session = *file_sessions[file_source][0]; // Use first session
+						auto &activity = *activities[0];                // Use first activity
+
+						// Copy sport information
+						activity.sport = session.sport;
+						activity.sub_sport = session.sub_sport;
+
+						// Copy performance data
+						activity.total_distance = session.total_distance;
+						activity.total_elapsed_time = session.total_elapsed_time;
+						activity.total_calories = session.total_calories;
+						activity.avg_heart_rate = session.avg_heart_rate;
+						activity.max_heart_rate = session.max_heart_rate;
+						activity.avg_speed = session.avg_speed;
+						activity.max_speed = session.max_speed;
+						activity.avg_power = session.avg_power;
+						activity.max_power = session.max_power;
+						activity.avg_cadence = session.avg_cadence;
+						activity.max_cadence = session.max_cadence;
+						activity.total_ascent = session.total_ascent;
+						activity.total_descent = session.total_descent;
+
+						// Copy start time if not already set
+						if (activity.start_time.value == 0 && session.start_time.value != 0) {
+							activity.start_time = session.start_time;
+						}
+					}
 				}
 			}
 
-			file.close();
-
 		} catch (const std::exception &e) {
-			throw std::runtime_error("Error reading FIT file: " + string(e.what()));
+			throw std::runtime_error("Error reading FIT files: " + string(e.what()));
 		}
 	}
 };
@@ -1472,7 +1651,10 @@ static unique_ptr<FunctionData> FitTableBind(ClientContext &context, TableFuncti
 	                             {"enhanced_respiration_rate", LogicalType::DOUBLE},
 
 	                             // Device info
-	                             {"device_index", LogicalType::UTINYINT}};
+	                             {"device_index", LogicalType::UTINYINT},
+
+	                             // File source
+	                             {"file_source", LogicalType::VARCHAR}};
 
 	// Extract names and types from the column definitions
 	for (const auto &col : columns) {
@@ -1673,6 +1855,9 @@ static void FitTableFunction(ClientContext &context, TableFunctionInput &data_p,
 
 		// Device info
 		output.SetValue(col++, row, fit_record.device_index > 0 ? Value::UTINYINT(fit_record.device_index) : Value());
+
+		// File source
+		output.SetValue(col++, row, !fit_record.file_source.empty() ? Value(fit_record.file_source) : Value());
 	}
 
 	output.SetCardinality(rows_to_output);
@@ -1713,7 +1898,8 @@ static unique_ptr<FunctionData> FitActivitiesBind(ClientContext &context, TableF
 	                                             {"start_position_lat", LogicalType::DOUBLE},
 	                                             {"start_position_long", LogicalType::DOUBLE},
 	                                             {"end_position_lat", LogicalType::DOUBLE},
-	                                             {"end_position_long", LogicalType::DOUBLE}};
+	                                             {"end_position_long", LogicalType::DOUBLE},
+	                                             {"file_source", LogicalType::VARCHAR}};
 
 	for (const auto &col : columns) {
 		names.push_back(col.first);
@@ -1771,6 +1957,7 @@ static void FitActivitiesFunction(ClientContext &context, TableFunctionInput &da
 		                activity.end_position_lat != 0.0 ? Value::DOUBLE(activity.end_position_lat) : Value());
 		output.SetValue(col++, row,
 		                activity.end_position_long != 0.0 ? Value::DOUBLE(activity.end_position_long) : Value());
+		output.SetValue(col++, row, !activity.file_source.empty() ? Value(activity.file_source) : Value());
 	}
 
 	output.SetCardinality(rows_to_output);
@@ -1799,7 +1986,8 @@ static unique_ptr<FunctionData> FitSessionsBind(ClientContext &context, TableFun
 	    {"total_work", LogicalType::UINTEGER},       {"total_ascent", LogicalType::DOUBLE},
 	    {"total_descent", LogicalType::DOUBLE},      {"first_lap_index", LogicalType::UTINYINT},
 	    {"num_laps", LogicalType::UTINYINT},         {"event", LogicalType::VARCHAR},
-	    {"event_type", LogicalType::VARCHAR},        {"trigger", LogicalType::VARCHAR}};
+	    {"event_type", LogicalType::VARCHAR},        {"trigger", LogicalType::VARCHAR},
+	    {"file_source", LogicalType::VARCHAR}};
 
 	for (const auto &col : columns) {
 		names.push_back(col.first);
@@ -1893,7 +2081,8 @@ static unique_ptr<FunctionData> FitLapsBind(ClientContext &context, TableFunctio
 	         "start_position_lat",
 	         "start_position_long",
 	         "end_position_lat",
-	         "end_position_long"};
+	         "end_position_long",
+	         "file_source"};
 
 	return_types = {LogicalType::UINTEGER,     LogicalType::UINTEGER,  LogicalType::UBIGINT,  LogicalType::TIMESTAMP_TZ,
 	                LogicalType::TIMESTAMP_TZ, LogicalType::DOUBLE,    LogicalType::DOUBLE,   LogicalType::DOUBLE,
@@ -1901,7 +2090,7 @@ static unique_ptr<FunctionData> FitLapsBind(ClientContext &context, TableFunctio
 	                LogicalType::UTINYINT,     LogicalType::UTINYINT,  LogicalType::UTINYINT, LogicalType::UTINYINT,
 	                LogicalType::USMALLINT,    LogicalType::USMALLINT, LogicalType::DOUBLE,   LogicalType::DOUBLE,
 	                LogicalType::VARCHAR,      LogicalType::VARCHAR,   LogicalType::VARCHAR,  LogicalType::DOUBLE,
-	                LogicalType::DOUBLE,       LogicalType::DOUBLE,    LogicalType::DOUBLE};
+	                LogicalType::DOUBLE,       LogicalType::DOUBLE,    LogicalType::DOUBLE,   LogicalType::VARCHAR};
 
 	return make_uniq<FitTableFunctionData>(file_path, "laps", &context);
 }
@@ -1969,13 +2158,13 @@ static unique_ptr<FunctionData> FitDevicesBind(ClientContext &context, TableFunc
 	names = {"device_id",      "activity_id",     "device_index",     "device_type",           "manufacturer",
 	         "product",        "serial_number",   "software_version", "hardware_version",      "cum_operating_time",
 	         "battery_status", "sensor_position", "descriptor",       "ant_transmission_type", "ant_device_number",
-	         "ant_network",    "source_type",     "product_name",     "battery_voltage"};
+	         "ant_network",    "source_type",     "product_name",     "battery_voltage",       "file_source"};
 
 	return_types = {LogicalType::UINTEGER, LogicalType::UBIGINT,  LogicalType::UTINYINT,  LogicalType::VARCHAR,
 	                LogicalType::VARCHAR,  LogicalType::VARCHAR,  LogicalType::UBIGINT,   LogicalType::VARCHAR,
 	                LogicalType::VARCHAR,  LogicalType::UINTEGER, LogicalType::VARCHAR,   LogicalType::VARCHAR,
 	                LogicalType::VARCHAR,  LogicalType::UTINYINT, LogicalType::USMALLINT, LogicalType::VARCHAR,
-	                LogicalType::VARCHAR,  LogicalType::VARCHAR,  LogicalType::DOUBLE};
+	                LogicalType::VARCHAR,  LogicalType::VARCHAR,  LogicalType::DOUBLE,    LogicalType::VARCHAR};
 
 	return make_uniq<FitTableFunctionData>(file_path, "devices", &context);
 }
@@ -2032,15 +2221,15 @@ static unique_ptr<FunctionData> FitEventsBind(ClientContext &context, TableFunct
 	auto file_path = input.inputs[0].GetValue<string>();
 
 	// Define event columns based on FitEvent structure
-	names = {"event_id",  "activity_id",  "timestamp",      "event",          "event_type", "data",
-	         "data16",    "score",        "opponent_score", "front_gear_num", "front_gear", "rear_gear_num",
-	         "rear_gear", "device_index", "activity_type",  "start_timestamp"};
+	names = {"event_id",  "activity_id",  "timestamp",      "event",           "event_type", "data",
+	         "data16",    "score",        "opponent_score", "front_gear_num",  "front_gear", "rear_gear_num",
+	         "rear_gear", "device_index", "activity_type",  "start_timestamp", "file_source"};
 
-	return_types = {
-	    LogicalType::UINTEGER,  LogicalType::UBIGINT,  LogicalType::TIMESTAMP_TZ, LogicalType::VARCHAR,
-	    LogicalType::VARCHAR,   LogicalType::UINTEGER, LogicalType::USMALLINT,    LogicalType::USMALLINT,
-	    LogicalType::USMALLINT, LogicalType::UTINYINT, LogicalType::UTINYINT,     LogicalType::UTINYINT,
-	    LogicalType::UTINYINT,  LogicalType::UTINYINT, LogicalType::VARCHAR,      LogicalType::TIMESTAMP_TZ};
+	return_types = {LogicalType::UINTEGER,  LogicalType::UBIGINT,  LogicalType::TIMESTAMP_TZ, LogicalType::VARCHAR,
+	                LogicalType::VARCHAR,   LogicalType::UINTEGER, LogicalType::USMALLINT,    LogicalType::USMALLINT,
+	                LogicalType::USMALLINT, LogicalType::UTINYINT, LogicalType::UTINYINT,     LogicalType::UTINYINT,
+	                LogicalType::UTINYINT,  LogicalType::UTINYINT, LogicalType::VARCHAR,      LogicalType::TIMESTAMP_TZ,
+	                LogicalType::VARCHAR};
 
 	return make_uniq<FitTableFunctionData>(file_path, "events", &context);
 }
@@ -2117,7 +2306,8 @@ static unique_ptr<FunctionData> FitUsersBind(ClientContext &context, TableFuncti
 	         "height_setting",
 	         "weight_setting",
 	         "resting_heart_rate",
-	         "default_max_swimming_hr"};
+	         "default_max_swimming_hr",
+	         "file_source"};
 
 	return_types = {LogicalType::UINTEGER, LogicalType::VARCHAR,  LogicalType::UTINYINT, LogicalType::DOUBLE,
 	                LogicalType::DOUBLE,   LogicalType::VARCHAR,  LogicalType::TINYINT,  LogicalType::DOUBLE,
@@ -2125,7 +2315,8 @@ static unique_ptr<FunctionData> FitUsersBind(ClientContext &context, TableFuncti
 	                LogicalType::UTINYINT, LogicalType::UTINYINT, LogicalType::VARCHAR,  LogicalType::VARCHAR,
 	                LogicalType::VARCHAR,  LogicalType::VARCHAR,  LogicalType::VARCHAR,  LogicalType::VARCHAR,
 	                LogicalType::UINTEGER, LogicalType::UBIGINT,  LogicalType::UINTEGER, LogicalType::UINTEGER,
-	                LogicalType::VARCHAR,  LogicalType::VARCHAR,  LogicalType::UTINYINT, LogicalType::UTINYINT};
+	                LogicalType::VARCHAR,  LogicalType::VARCHAR,  LogicalType::UTINYINT, LogicalType::UTINYINT,
+	                LogicalType::VARCHAR};
 
 	return make_uniq<FitTableFunctionData>(file_path, "users", &context);
 }
