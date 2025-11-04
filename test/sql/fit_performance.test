@@ -14,8 +14,8 @@ SELECT timestamp, heart_rate, power, speed
 FROM fit_records('sample.fit')
 LIMIT 1000;
 
--- # Test aggregation performance on large datasets
--- statement ok
+# skipped: aggregation performance on large datasets
+statement ok
 -- SELECT
 --     DATE_TRUNC('minute', timestamp) as minute,
 --     AVG(heart_rate) as avg_hr,
