@@ -18,9 +18,20 @@ include_directories(src/fit-sdk)
 # Collect FIT SDK source files
 file(GLOB FIT_SDK_SOURCES "src/fit-sdk/*.cpp")
 
-set(EXTENSION_SOURCES 
+set(EXTENSION_SOURCES
     src/fit_extension.cpp
     src/utils.cpp
+    src/fit_types.cpp
+    src/fit_glob.cpp
+    src/fit_collector.cpp
+    src/fit_table_data.cpp
+    src/fit_records_table.cpp
+    src/fit_activities_table.cpp
+    src/fit_sessions_table.cpp
+    src/fit_laps_table.cpp
+    src/fit_devices_table.cpp
+    src/fit_events_table.cpp
+    src/fit_users_table.cpp
     ${FIT_SDK_SOURCES}
 )
 

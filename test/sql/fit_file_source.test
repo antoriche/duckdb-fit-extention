@@ -1,0 +1,50 @@
+# name: test/sql/fit_file_source.test
+# description: every table function exposes the source file via file_source (regression test - it was previously left unset for sessions/laps/devices/events/users)
+# group: [sql]
+
+require fit
+
+# Sessions are non-empty in sample.fit, so this strictly proves the previously-unset
+# file_source column is now populated.
+query T
+SELECT DISTINCT file_source FROM fit_sessions('sample.fit');
+----
+sample.fit
+
+# For every table, each emitted row must carry the correct (non-NULL) file_source.
+# The COUNT(CASE ...) equals COUNT(*) only when no row is NULL or mismatched;
+# it is vacuously true for tables that happen to have no rows for this file.
+query I
+SELECT COUNT(*) = COUNT(CASE WHEN file_source = 'sample.fit' THEN 1 END) FROM fit_records('sample.fit');
+----
+true
+
+query I
+SELECT COUNT(*) = COUNT(CASE WHEN file_source = 'sample.fit' THEN 1 END) FROM fit_activities('sample.fit');
+----
+true
+
+query I
+SELECT COUNT(*) = COUNT(CASE WHEN file_source = 'sample.fit' THEN 1 END) FROM fit_sessions('sample.fit');
+----
+true
+
+query I
+SELECT COUNT(*) = COUNT(CASE WHEN file_source = 'sample.fit' THEN 1 END) FROM fit_laps('sample.fit');
+----
+true
+
+query I
+SELECT COUNT(*) = COUNT(CASE WHEN file_source = 'sample.fit' THEN 1 END) FROM fit_devices('sample.fit');
+----
+true
+
+query I
+SELECT COUNT(*) = COUNT(CASE WHEN file_source = 'sample.fit' THEN 1 END) FROM fit_events('sample.fit');
+----
+true
+
+query I
+SELECT COUNT(*) = COUNT(CASE WHEN file_source = 'sample.fit' THEN 1 END) FROM fit_users('sample.fit');
+----
+true

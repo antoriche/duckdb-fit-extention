@@ -5,7 +5,13 @@
 
 namespace duckdb {
 
-// Structure to hold FIT record data - aligned with documentation
+// Structure to hold FIT record data - aligned with documentation.
+//
+// Note on numeric types: several counter/rate fields (heart_rate, cadence,
+// power, temperature, ...) are stored as `float`/`double` rather than the
+// integer types their source FIT fields use. This is intentional (see the
+// "Fix float values" change) - the output schema still exposes them as
+// UTINYINT/USMALLINT/TINYINT, so the emitted values are integers.
 struct FitRecord {
 	// Basic timestamp and location
 	timestamp_tz_t timestamp;
@@ -21,13 +27,13 @@ struct FitRecord {
 	double vertical_speed; // Meters per second
 
 	// Power metrics (watts)
-	uint16_t power;
-	uint16_t motor_power; // E-bike motor power
-	uint32_t accumulated_power;
-	uint16_t compressed_accumulated_power;
+	float power;
+	float motor_power; // E-bike motor power
+	float accumulated_power;
+	float compressed_accumulated_power;
 
 	// Heart rate and physiological data
-	uint8_t heart_rate; // Beats per minute
+	float heart_rate; // Beats per minute
 	double total_hemoglobin_conc;
 	double total_hemoglobin_conc_min;
 	double total_hemoglobin_conc_max;
@@ -36,25 +42,25 @@ struct FitRecord {
 	double saturated_hemoglobin_percent_max;
 
 	// Cadence metrics
-	uint8_t cadence; // RPM/steps per minute
+	float cadence; // RPM/steps per minute
 	double cadence256;
 	double fractional_cadence;
 
 	// Temperature (Celsius)
-	int8_t temperature;
-	double core_temperature;
+	float temperature;
+	float core_temperature;
 
 	// Cycling metrics
 	double grade; // Percentage
-	uint16_t resistance;
-	uint8_t left_right_balance;        // Percentage
+	float resistance;
+	float left_right_balance;          // Percentage
 	double left_torque_effectiveness;  // Percentage
 	double right_torque_effectiveness; // Percentage
 	double left_pedal_smoothness;      // Percentage
 	double right_pedal_smoothness;     // Percentage
 	double combined_pedal_smoothness;  // Percentage
-	int8_t left_pco;                   // Platform center offset (mm)
-	int8_t right_pco;                  // Platform center offset (mm)
+	float left_pco;                    // Platform center offset (mm)
+	float right_pco;                   // Platform center offset (mm)
 
 	// Running metrics
 	double vertical_oscillation; // Millimeters
@@ -72,10 +78,10 @@ struct FitRecord {
 
 	// Navigation and course
 	double time_from_course; // Seconds
-	uint8_t gps_accuracy;    // Meters
+	double gps_accuracy;     // Meters
 
 	// Energy and calories
-	uint16_t calories; // Kilocalories
+	double calories; // Kilocalories
 
 	// Zones and training
 	uint8_t zone;
@@ -144,17 +150,17 @@ struct FitActivity {
 	string product;
 	uint64_t device_serial_number;
 	string software_version;
-	uint32_t total_calories;
+	double total_calories;
 	double total_ascent;
 	double total_descent;
-	uint8_t avg_heart_rate;
-	uint8_t max_heart_rate;
+	float avg_heart_rate;
+	float max_heart_rate;
 	double avg_speed;
 	double max_speed;
-	uint16_t avg_power;
-	uint16_t max_power;
-	uint8_t avg_cadence;
-	uint8_t max_cadence;
+	double avg_power;
+	double max_power;
+	float avg_cadence;
+	float max_cadence;
 	double start_position_lat;
 	double start_position_long;
 	double end_position_lat;
@@ -175,20 +181,20 @@ struct FitSession {
 	double total_distance;
 	string sport;
 	string sub_sport;
-	uint32_t total_calories;
+	double total_calories;
 	double avg_speed;
 	double max_speed;
-	uint8_t avg_heart_rate;
-	uint8_t max_heart_rate;
-	uint8_t min_heart_rate;
-	uint8_t avg_cadence;
-	uint8_t max_cadence;
-	uint16_t avg_power;
-	uint16_t max_power;
-	uint16_t normalized_power;
+	float avg_heart_rate;
+	float max_heart_rate;
+	float min_heart_rate;
+	double avg_cadence;
+	double max_cadence;
+	float avg_power;
+	float max_power;
+	float normalized_power;
 	double intensity_factor;
 	double training_stress_score;
-	uint32_t total_work;
+	double total_work;
 	double total_ascent;
 	double total_descent;
 	uint8_t first_lap_index;
@@ -214,13 +220,13 @@ struct FitLap {
 	uint32_t total_calories;
 	double avg_speed;
 	double max_speed;
-	uint8_t avg_heart_rate;
-	uint8_t max_heart_rate;
-	uint8_t min_heart_rate;
-	uint8_t avg_cadence;
-	uint8_t max_cadence;
-	uint16_t avg_power;
-	uint16_t max_power;
+	float avg_heart_rate;
+	float max_heart_rate;
+	float min_heart_rate;
+	double avg_cadence;
+	double max_cadence;
+	double avg_power;
+	double max_power;
 	double total_ascent;
 	double total_descent;
 	string lap_trigger;
@@ -294,12 +300,12 @@ struct FitUser {
 	string language;
 	int8_t time_zone;
 	double activity_class;
-	uint8_t running_lactate_threshold_hr;
-	uint8_t cycling_lactate_threshold_hr;
-	uint8_t swimming_lactate_threshold_hr;
-	uint8_t default_max_running_hr;
-	uint8_t default_max_biking_hr;
-	uint8_t default_max_hr;
+	float running_lactate_threshold_hr;
+	float cycling_lactate_threshold_hr;
+	float swimming_lactate_threshold_hr;
+	float default_max_running_hr;
+	float default_max_biking_hr;
+	float default_max_hr;
 	string hr_setting;
 	string speed_setting;
 	string dist_setting;
@@ -312,8 +318,8 @@ struct FitUser {
 	uint32_t sleep_time;
 	string height_setting;
 	string weight_setting;
-	uint8_t resting_heart_rate;
-	uint8_t default_max_swimming_hr;
+	float resting_heart_rate;
+	float default_max_swimming_hr;
 	string file_source;
 
 	FitUser();

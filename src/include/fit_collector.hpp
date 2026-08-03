@@ -1,6 +1,6 @@
 #pragma once
 
-#include "include/fit_types.hpp"
+#include "fit_types.hpp"
 #include "fit_decode.hpp"
 #include "fit_mesg_broadcaster.hpp"
 #include "fit_record_mesg.hpp"

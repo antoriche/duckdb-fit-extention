@@ -2,7 +2,7 @@
 
 #include "duckdb.hpp"
 #include "duckdb/function/table_function.hpp"
-#include "include/fit_types.hpp"
+#include "fit_types.hpp"
 #include <vector>
 
 namespace duckdb {
