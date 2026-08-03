@@ -23,6 +23,7 @@ struct FitTableFunctionData : public TableFunctionData {
 	FitTableFunctionData(string name, string type = "records", ClientContext *context = nullptr);
 
 private:
+	ClientContext *context;
 	void LoadFitFile();
 };
 

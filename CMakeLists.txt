@@ -22,7 +22,6 @@ set(EXTENSION_SOURCES
     src/fit_extension.cpp
     src/utils.cpp
     src/fit_types.cpp
-    src/fit_glob.cpp
     src/fit_collector.cpp
     src/fit_table_data.cpp
     src/fit_records_table.cpp

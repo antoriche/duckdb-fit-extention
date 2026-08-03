@@ -1,18 +1,19 @@
 #include "include/fit_table_base.hpp"
 #include "include/fit_collector.hpp"
-#include "include/fit_glob.hpp"
+
+#include "duckdb/common/file_system.hpp"
 
 #include "fit_decode.hpp"
 #include "fit_mesg_broadcaster.hpp"
 
-#include <fstream>
 #include <map>
+#include <sstream>
 #include <stdexcept>
 
 namespace duckdb {
 
 FitTableFunctionData::FitTableFunctionData(string name, string type, ClientContext *context)
-    : input_name(name), current_row(0), user_timezone("UTC"), table_type(type) {
+    : input_name(name), current_row(0), user_timezone("UTC"), table_type(type), context(context) {
 	// Get user's timezone setting if context is available
 	if (context) {
 		Value timezone_value;
@@ -31,38 +32,46 @@ void FitTableFunctionData::LoadFitFile() {
 			throw std::runtime_error("File path cannot be empty");
 		}
 
-		// Expand glob pattern to get list of files
-		vector<string> files = ExpandGlobPattern(input_name);
+		// Resolve DuckDB's virtual filesystem so that reads work across every backend
+		// DuckDB knows about: local files, s3://, https://, registered in-memory files,
+		// and the WASM (Emscripten) filesystem. Reading through this layer instead of
+		// std::fstream is what makes the extension usable in the DuckDB-WASM build.
+		unique_ptr<FileSystem> local_fs;
+		FileSystem *fs_ptr;
+		if (context) {
+			fs_ptr = &FileSystem::GetFileSystem(*context);
+		} else {
+			// No client context (e.g. direct construction in a unit test): fall back to
+			// the local filesystem so behaviour matches a native single-file read.
+			local_fs = FileSystem::CreateLocal();
+			fs_ptr = local_fs.get();
+		}
+		FileSystem &fs = *fs_ptr;
 
-		// Check if pattern contains wildcards
-		bool has_wildcards = (input_name.find('*') != string::npos || input_name.find('?') != string::npos ||
-		                      input_name.find('[') != string::npos);
+		// Expand glob pattern to get list of files. HasGlob keeps the wildcard detection
+		// consistent with DuckDB, and fs.Glob honours the active filesystem backend.
+		bool has_wildcards = FileSystem::HasGlob(input_name);
 
-		if (files.empty()) {
-			if (has_wildcards) {
-				// For wildcard patterns, return an empty result (valid schema, 0 rows)
-				fit_records.clear();
-				fit_activities.clear();
-				fit_sessions.clear();
-				fit_laps.clear();
-				fit_devices.clear();
-				fit_events.clear();
-				fit_users.clear();
-				return;
-			} else {
-				// For non-wildcard patterns, throw a more specific error
-				throw std::runtime_error("Cannot open FIT file: " + input_name);
+		vector<string> files;
+		if (has_wildcards) {
+			for (auto &info : fs.Glob(input_name)) {
+				files.push_back(info.path);
 			}
+		} else {
+			files.push_back(input_name);
 		}
 
-		// For non-wildcard patterns, validate the single file exists and is readable
-		if (!has_wildcards && files.size() == 1) {
-			std::fstream test_file;
-			test_file.open(files[0], std::ios::in | std::ios::binary);
-			if (!test_file.is_open()) {
-				throw std::runtime_error("Cannot open FIT file: " + input_name);
-			}
-			test_file.close();
+		if (files.empty()) {
+			// Only reachable for wildcard patterns that matched nothing: return an
+			// empty result (valid schema, 0 rows).
+			fit_records.clear();
+			fit_activities.clear();
+			fit_sessions.clear();
+			fit_laps.clear();
+			fit_devices.clear();
+			fit_events.clear();
+			fit_users.clear();
+			return;
 		}
 
 		// Create shared collector that will accumulate data from all files
@@ -71,17 +80,25 @@ void FitTableFunctionData::LoadFitFile() {
 		// Process each file
 		for (const auto &file_path : files) {
 			try {
-				std::fstream file;
-				file.open(file_path, std::ios::in | std::ios::binary);
+				// Read the whole file through DuckDB's filesystem into memory, then wrap
+				// the bytes in an istringstream for the FIT SDK decoder (which only knows
+				// how to consume a std::istream).
+				auto handle = fs.OpenFile(file_path, FileFlags::FILE_FLAGS_READ);
+				idx_t file_size = handle->GetFileSize();
 
-				if (!file.is_open()) {
-					if (!has_wildcards) {
-						// For single files, this is an error
-						throw std::runtime_error("Cannot open FIT file: " + file_path);
+				std::string buffer;
+				buffer.resize(file_size);
+				idx_t bytes_read = 0;
+				while (bytes_read < file_size) {
+					int64_t n = handle->Read((void *)(buffer.data() + bytes_read), file_size - bytes_read);
+					if (n <= 0) {
+						break; // Reached EOF early; decode whatever we managed to read
 					}
-					// For wildcard patterns, skip files that can't be opened
-					continue;
+					bytes_read += (idx_t)n;
 				}
+				buffer.resize(bytes_read);
+
+				std::istringstream file(buffer, std::ios::in | std::ios::binary);
 
 				// Set current file in collector
 				collector.SetCurrentFile(file_path);
@@ -106,8 +123,6 @@ void FitTableFunctionData::LoadFitFile() {
 
 				// Decode the file
 				decode.Read(&file, &mesgBroadcaster, &mesgBroadcaster, nullptr);
-
-				file.close();
 
 			} catch (const std::exception &e) {
 				if (!has_wildcards) {
