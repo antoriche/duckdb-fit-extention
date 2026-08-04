@@ -1,0 +1,63 @@
+# name: test/sql/fit_filesystem_url.test
+# description: file:// URLs are read through DuckDB's FileSystem, not std::fstream (issue #1)
+# group: [sql]
+
+# A file:// URL is understood by DuckDB's LocalFileSystem (the "file:" prefix is
+# stripped) but NOT by std::fstream, which would try to open a file literally named
+# "file://...". Reading the sample through a file:// URL therefore only succeeds when
+# the bytes are pulled through FileSystem::OpenFile -- exactly the fix for issue #1.
+#
+# ${WORKING_DIR} is substituted by the test runner with the test's absolute CWD. On
+# Windows that is a drive-letter path with backslashes, which does not form a valid
+# file:// URL, so this file is restricted to POSIX platforms.
+require notwindows
+
+require fit
+
+# Baseline direct read, for parity comparison below.
+query I
+SELECT COUNT(*) FROM fit_records('sample.fit');
+----
+7923
+
+# Reading the same file via a file:// URL yields the same row count.
+query I
+SELECT COUNT(*) FROM fit_records('file://${WORKING_DIR}/sample.fit');
+----
+7923
+
+# The file:// read must return the exact same rows as the direct read. The
+# file_source column is excluded because it deliberately records the input path,
+# which differs between the two spellings ("file://..." vs "sample.fit").
+query I
+SELECT COUNT(*) FROM (
+    SELECT * EXCLUDE (file_source) FROM fit_records('file://${WORKING_DIR}/sample.fit')
+    EXCEPT
+    SELECT * EXCLUDE (file_source) FROM fit_records('sample.fit')
+);
+----
+0
+
+# Every table function routes through the same loader, so file:// works for all of them.
+statement ok
+SELECT * FROM fit_activities('file://${WORKING_DIR}/sample.fit');
+
+statement ok
+SELECT * FROM fit_sessions('file://${WORKING_DIR}/sample.fit');
+
+statement ok
+SELECT * FROM fit_laps('file://${WORKING_DIR}/sample.fit');
+
+statement ok
+SELECT * FROM fit_devices('file://${WORKING_DIR}/sample.fit');
+
+statement ok
+SELECT * FROM fit_events('file://${WORKING_DIR}/sample.fit');
+
+statement ok
+SELECT * FROM fit_users('file://${WORKING_DIR}/sample.fit');
+
+# A concrete (non-glob) file:// path that does not exist still errors.
+statement error
+SELECT * FROM fit_records('file://${WORKING_DIR}/definitely_missing.fit');
+----

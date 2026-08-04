@@ -10,50 +10,7 @@ SELECT COUNT(*) FROM fit_records('sample.fit');
 ----
 7923
 
-# --- Proof the extension reads through DuckDB's FileSystem layer ---
-#
-# A file:// URL is understood by DuckDB's LocalFileSystem (the "file:" prefix is
-# stripped) but NOT by std::fstream, which would try to open a file literally named
-# "file://...". Reading the sample through a file:// URL therefore only succeeds when
-# the bytes are pulled through FileSystem::OpenFile — exactly the fix for issue #1.
-# ${WORKING_DIR} is substituted by the test runner with the test's absolute CWD.
-query I
-SELECT COUNT(*) FROM fit_records('file://${WORKING_DIR}/sample.fit');
-----
-7923
-
-# The file:// read must return the exact same rows as the direct read. The
-# file_source column is excluded because it deliberately records the input path,
-# which differs between the two spellings ("file://..." vs "sample.fit").
-query I
-SELECT COUNT(*) FROM (
-    SELECT * EXCLUDE (file_source) FROM fit_records('file://${WORKING_DIR}/sample.fit')
-    EXCEPT
-    SELECT * EXCLUDE (file_source) FROM fit_records('sample.fit')
-);
-----
-0
-
-# Every table function routes through the same loader, so file:// works for all of them.
-statement ok
-SELECT * FROM fit_activities('file://${WORKING_DIR}/sample.fit');
-
-statement ok
-SELECT * FROM fit_sessions('file://${WORKING_DIR}/sample.fit');
-
-statement ok
-SELECT * FROM fit_laps('file://${WORKING_DIR}/sample.fit');
-
-statement ok
-SELECT * FROM fit_devices('file://${WORKING_DIR}/sample.fit');
-
-statement ok
-SELECT * FROM fit_events('file://${WORKING_DIR}/sample.fit');
-
-statement ok
-SELECT * FROM fit_users('file://${WORKING_DIR}/sample.fit');
-
-# --- Globbing now goes through FileSystem::Glob ---
+# --- Globbing goes through FileSystem::Glob ---
 
 # A wildcard pattern that matches the sample resolves and reads the same data.
 query I
@@ -80,10 +37,6 @@ SELECT COUNT(*) FROM fit_activities('nonexistent_*.fit');
 0
 
 # --- Error semantics for a concrete (non-glob) path that does not exist ---
-statement error
-SELECT * FROM fit_records('file://${WORKING_DIR}/definitely_missing.fit');
-----
-
 statement error
 SELECT * FROM fit_records('nonexistent.fit');
 ----
