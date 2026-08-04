@@ -1,0 +1,6 @@
+# The fit-sdk directory is vendored third-party code (the Garmin FIT C++ SDK).
+# It is intentionally kept byte-for-byte identical to upstream, so it is excluded
+# from the project's clang-format style (mirroring the tidy-check exclusion in the
+# top-level Makefile). DisableFormat makes clang-format leave these files untouched.
+DisableFormat: true
+SortIncludes: false

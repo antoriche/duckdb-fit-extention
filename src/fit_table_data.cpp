@@ -184,7 +184,6 @@ void FitTableFunctionData::LoadFitFile() {
 
 				if (file_sessions.find(file_source) != file_sessions.end() && !file_sessions[file_source].empty() &&
 				    !activities.empty()) {
-
 					auto &session = *file_sessions[file_source][0]; // Use first session
 					auto &activity = *activities[0];                // Use first activity
 
