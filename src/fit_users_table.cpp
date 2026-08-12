@@ -47,7 +47,7 @@ unique_ptr<FunctionData> FitUsersBind(ClientContext &context, TableFunctionBindI
 	                LogicalType::VARCHAR,  LogicalType::VARCHAR,  LogicalType::UTINYINT, LogicalType::UTINYINT,
 	                LogicalType::VARCHAR};
 
-	return make_uniq<FitTableFunctionData>(file_path, "users", &context);
+	return make_uniq<FitTableFunctionData>(file_path, "users", &context, FitCompressionParameter(input));
 }
 
 void FitUsersFunction(ClientContext &context, TableFunctionInput &data_p, DataChunk &output) {

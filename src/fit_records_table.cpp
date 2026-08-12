@@ -138,7 +138,7 @@ unique_ptr<FunctionData> FitRecordsBind(ClientContext &context, TableFunctionBin
 		return_types.push_back(col.type);
 	}
 
-	return make_uniq<FitTableFunctionData>(file_path, "records", &context);
+	return make_uniq<FitTableFunctionData>(file_path, "records", &context, FitCompressionParameter(input));
 }
 
 void FitRecordsFunction(ClientContext &context, TableFunctionInput &data_p, DataChunk &output) {

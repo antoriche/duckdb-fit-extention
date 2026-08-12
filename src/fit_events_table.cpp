@@ -18,7 +18,7 @@ unique_ptr<FunctionData> FitEventsBind(ClientContext &context, TableFunctionBind
 	                LogicalType::UTINYINT,  LogicalType::UTINYINT, LogicalType::VARCHAR,      LogicalType::TIMESTAMP_TZ,
 	                LogicalType::VARCHAR};
 
-	return make_uniq<FitTableFunctionData>(file_path, "events", &context);
+	return make_uniq<FitTableFunctionData>(file_path, "events", &context, FitCompressionParameter(input));
 }
 
 void FitEventsFunction(ClientContext &context, TableFunctionInput &data_p, DataChunk &output) {

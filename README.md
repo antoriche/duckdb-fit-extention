@@ -23,6 +23,30 @@ LOAD fit;
 | `fit_events(filename)`     | Activity events and markers                        |
 | `fit_users(filename)`      | User profile information                           |
 
+### Compression
+
+Files ending in `.gz` or `.zst` are decompressed as they are read:
+
+```sql
+SELECT * FROM fit_records('ride.fit.gz');
+```
+
+Pass `compression` to override the extension-based detection, for a file whose name does
+not carry the suffix:
+
+```sql
+SELECT * FROM fit_records('ride.fit.bin', compression => 'gzip');
+```
+
+Accepted values are `auto` (the default), `infer`, `gzip`, `zstd`, `uncompressed`, and
+`none`. Reading `.zst` requires the parquet extension, which registers DuckDB's zstd
+decompressor:
+
+```sql
+INSTALL parquet;
+LOAD parquet;
+```
+
 ### Example
 
 `SELECT * FROM fit_records('sample.fit') LIMIT 5;`

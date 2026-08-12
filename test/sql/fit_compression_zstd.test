@@ -1,0 +1,50 @@
+# name: test/sql/fit_compression_zstd.test
+# description: zstd-compressed FIT files, whose decompressor the parquet extension registers
+# group: [sql]
+
+# ZSTD is registered by the parquet extension rather than by core DuckDB, so every
+# assertion here depends on parquet being available.
+require parquet
+
+require fit
+
+# Baseline: the uncompressed sample. All assertions below are compared against this.
+query I
+SELECT COUNT(*) FROM fit_records('sample.fit');
+----
+7923
+
+query I
+SELECT COUNT(*) FROM fit_records('test/data/sample.fit.zst');
+----
+7923
+
+query I
+SELECT COUNT(*) FROM fit_records('test/data/sample.fit.zst', compression => 'zstd');
+----
+7923
+
+# The zstd read must return the exact same rows as the uncompressed read. Both
+# directions of EXCEPT ALL are checked, which makes this multiset equality rather than
+# subset containment. The file_source column is excluded because it records the input
+# path verbatim, which differs between the two spellings.
+query I
+SELECT COUNT(*) FROM (
+    (SELECT * EXCLUDE (file_source) FROM fit_records('test/data/sample.fit.zst')
+     EXCEPT ALL
+     SELECT * EXCLUDE (file_source) FROM fit_records('sample.fit'))
+    UNION ALL
+    (SELECT * EXCLUDE (file_source) FROM fit_records('sample.fit')
+     EXCEPT ALL
+     SELECT * EXCLUDE (file_source) FROM fit_records('test/data/sample.fit.zst'))
+);
+----
+0
+
+# A glob spanning both fixtures detects each from its own suffix and reads both in
+# full. This is the case that regresses if the read loop is bounded by the compressed
+# on-disk size.
+query I
+SELECT COUNT(*) FROM fit_records('test/data/sample.fit.*');
+----
+15846
