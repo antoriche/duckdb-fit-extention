@@ -2,6 +2,7 @@
 #include "include/fit_collector.hpp"
 
 #include "duckdb/common/file_system.hpp"
+#include "duckdb/common/virtual_file_system.hpp"
 
 #include "fit_decode.hpp"
 #include "fit_mesg_broadcaster.hpp"
@@ -12,8 +13,47 @@
 
 namespace duckdb {
 
-FitTableFunctionData::FitTableFunctionData(string name, string type, ClientContext *context)
-    : input_name(name), current_row(0), user_timezone("UTC"), table_type(type), context(context) {
+FileCompressionType FitCompressionParameter(TableFunctionBindInput &input) {
+	// named_parameters is a case-insensitive map, so the key needs no normalization.
+	auto entry = input.named_parameters.find("compression");
+	if (entry == input.named_parameters.end()) {
+		return FileCompressionType::AUTO_DETECT;
+	}
+	if (entry->second.IsNull()) {
+		throw BinderException("compression cannot be NULL");
+	}
+	return FileCompressionTypeFromString(StringValue::Get(entry->second));
+}
+
+// When `compression` resolves to a compressed type, fs.OpenFile returns a decompressing handle.
+static std::string ReadFileContents(FileSystem &fs, const string &path, FileCompressionType compression) {
+	auto handle = fs.OpenFile(path, FileFlags::FILE_FLAGS_READ | compression);
+
+	// GetFileSize() is only a starting allocation: on a compressed handle it reports the compressed child's size, which
+	// is smaller than what Read() will yield.
+	static constexpr idx_t MINIMUM_BUFFER_SIZE = 8192;
+	std::string buffer;
+	buffer.resize(MaxValue<idx_t>(handle->GetFileSize(), MINIMUM_BUFFER_SIZE));
+
+	idx_t bytes_read = 0;
+	while (true) {
+		if (bytes_read == buffer.size()) {
+			buffer.resize(buffer.size() * 2);
+		}
+		int64_t n = handle->Read((void *)(buffer.data() + bytes_read), buffer.size() - bytes_read);
+		if (n <= 0) {
+			break;
+		}
+		bytes_read += (idx_t)n;
+	}
+	buffer.resize(bytes_read);
+	return buffer;
+}
+
+FitTableFunctionData::FitTableFunctionData(string name, string type, ClientContext *context,
+                                           FileCompressionType compression)
+    : input_name(name), current_row(0), user_timezone("UTC"), table_type(type), compression(compression),
+      context(context) {
 	// Get user's timezone setting if context is available
 	if (context) {
 		Value timezone_value;
@@ -41,9 +81,11 @@ void FitTableFunctionData::LoadFitFile() {
 		if (context) {
 			fs_ptr = &FileSystem::GetFileSystem(*context);
 		} else {
-			// No client context (e.g. direct construction in a unit test): fall back to
-			// the local filesystem so behaviour matches a native single-file read.
-			local_fs = FileSystem::CreateLocal();
+			// No client context (e.g. direct construction in a unit test). FileSystem::CreateLocal()
+			// rejects any compression flag other than UNCOMPRESSED, so it would throw even on a
+			// plain path once AUTO_DETECT is passed. The bare VirtualFileSystem resolves the flag
+			// and registers gzip, though not zstd, which the parquet extension provides.
+			local_fs = make_uniq<VirtualFileSystem>();
 			fs_ptr = local_fs.get();
 		}
 		FileSystem &fs = *fs_ptr;
@@ -80,25 +122,8 @@ void FitTableFunctionData::LoadFitFile() {
 		// Process each file
 		for (const auto &file_path : files) {
 			try {
-				// Read the whole file through DuckDB's filesystem into memory, then wrap
-				// the bytes in an istringstream for the FIT SDK decoder (which only knows
-				// how to consume a std::istream).
-				auto handle = fs.OpenFile(file_path, FileFlags::FILE_FLAGS_READ);
-				idx_t file_size = handle->GetFileSize();
-
-				std::string buffer;
-				buffer.resize(file_size);
-				idx_t bytes_read = 0;
-				while (bytes_read < file_size) {
-					int64_t n = handle->Read((void *)(buffer.data() + bytes_read), file_size - bytes_read);
-					if (n <= 0) {
-						break; // Reached EOF early; decode whatever we managed to read
-					}
-					bytes_read += (idx_t)n;
-				}
-				buffer.resize(bytes_read);
-
-				std::istringstream file(buffer, std::ios::in | std::ios::binary);
+				// The FIT SDK decoder needs a seekable std::istream for both CheckIntegrity and Read.
+				std::istringstream file(ReadFileContents(fs, file_path, compression), std::ios::in | std::ios::binary);
 
 				// Set current file in collector
 				collector.SetCurrentFile(file_path);

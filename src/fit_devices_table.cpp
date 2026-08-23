@@ -19,7 +19,7 @@ unique_ptr<FunctionData> FitDevicesBind(ClientContext &context, TableFunctionBin
 	                LogicalType::VARCHAR,  LogicalType::UTINYINT, LogicalType::USMALLINT, LogicalType::VARCHAR,
 	                LogicalType::VARCHAR,  LogicalType::VARCHAR,  LogicalType::DOUBLE,    LogicalType::VARCHAR};
 
-	return make_uniq<FitTableFunctionData>(file_path, "devices", &context);
+	return make_uniq<FitTableFunctionData>(file_path, "devices", &context, FitCompressionParameter(input));
 }
 
 void FitDevicesFunction(ClientContext &context, TableFunctionInput &data_p, DataChunk &output) {

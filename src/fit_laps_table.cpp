@@ -45,7 +45,7 @@ unique_ptr<FunctionData> FitLapsBind(ClientContext &context, TableFunctionBindIn
 	                LogicalType::VARCHAR,      LogicalType::VARCHAR,   LogicalType::VARCHAR,  LogicalType::DOUBLE,
 	                LogicalType::DOUBLE,       LogicalType::DOUBLE,    LogicalType::DOUBLE,   LogicalType::VARCHAR};
 
-	return make_uniq<FitTableFunctionData>(file_path, "laps", &context);
+	return make_uniq<FitTableFunctionData>(file_path, "laps", &context, FitCompressionParameter(input));
 }
 
 void FitLapsFunction(ClientContext &context, TableFunctionInput &data_p, DataChunk &output) {

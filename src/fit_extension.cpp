@@ -27,41 +27,25 @@ inline void FitOpenSSLVersionScalarFun(DataChunk &args, ExpressionState &state, 
 	});
 }
 
+// Every FIT table function takes a single path and the same optional `compression` override.
+static void RegisterFitTableFunction(ExtensionLoader &loader, const string &name, table_function_t function,
+                                     table_function_bind_t bind) {
+	TableFunction table_function(name, {LogicalType::VARCHAR}, function, bind);
+	table_function.named_parameters["compression"] = LogicalType::VARCHAR;
+	loader.RegisterFunction(table_function);
+}
+
 static void LoadInternal(ExtensionLoader &loader) {
 	// Register the 7 FIT table functions corresponding to the 7 tables in documentation
-
-	// 1. Time-series records table (original 'fit' function)
-	TableFunction fit_records_function("fit_records", {LogicalType::VARCHAR}, FitRecordsFunction, FitRecordsBind);
-	loader.RegisterFunction(fit_records_function);
-
+	RegisterFitTableFunction(loader, "fit_records", FitRecordsFunction, FitRecordsBind);
 	// Keep original 'fit' function name for backward compatibility
-	TableFunction fit_table_function("fit", {LogicalType::VARCHAR}, FitRecordsFunction, FitRecordsBind);
-	loader.RegisterFunction(fit_table_function);
-
-	// 2. Activities metadata table
-	TableFunction fit_activities_function("fit_activities", {LogicalType::VARCHAR}, FitActivitiesFunction,
-	                                      FitActivitiesBind);
-	loader.RegisterFunction(fit_activities_function);
-
-	// 3. Sessions table
-	TableFunction fit_sessions_function("fit_sessions", {LogicalType::VARCHAR}, FitSessionsFunction, FitSessionsBind);
-	loader.RegisterFunction(fit_sessions_function);
-
-	// 4. Laps table
-	TableFunction fit_laps_function("fit_laps", {LogicalType::VARCHAR}, FitLapsFunction, FitLapsBind);
-	loader.RegisterFunction(fit_laps_function);
-
-	// 5. Device information table
-	TableFunction fit_devices_function("fit_devices", {LogicalType::VARCHAR}, FitDevicesFunction, FitDevicesBind);
-	loader.RegisterFunction(fit_devices_function);
-
-	// 6. Events table
-	TableFunction fit_events_function("fit_events", {LogicalType::VARCHAR}, FitEventsFunction, FitEventsBind);
-	loader.RegisterFunction(fit_events_function);
-
-	// 7. User profile table
-	TableFunction fit_users_function("fit_users", {LogicalType::VARCHAR}, FitUsersFunction, FitUsersBind);
-	loader.RegisterFunction(fit_users_function);
+	RegisterFitTableFunction(loader, "fit", FitRecordsFunction, FitRecordsBind);
+	RegisterFitTableFunction(loader, "fit_activities", FitActivitiesFunction, FitActivitiesBind);
+	RegisterFitTableFunction(loader, "fit_sessions", FitSessionsFunction, FitSessionsBind);
+	RegisterFitTableFunction(loader, "fit_laps", FitLapsFunction, FitLapsBind);
+	RegisterFitTableFunction(loader, "fit_devices", FitDevicesFunction, FitDevicesBind);
+	RegisterFitTableFunction(loader, "fit_events", FitEventsFunction, FitEventsBind);
+	RegisterFitTableFunction(loader, "fit_users", FitUsersFunction, FitUsersBind);
 
 	// Register scalar function
 	auto fit_openssl_version_scalar_function =

@@ -45,7 +45,7 @@ unique_ptr<FunctionData> FitActivitiesBind(ClientContext &context, TableFunction
 		return_types.push_back(col.second);
 	}
 
-	return make_uniq<FitTableFunctionData>(file_path, "activities", &context);
+	return make_uniq<FitTableFunctionData>(file_path, "activities", &context, FitCompressionParameter(input));
 }
 
 void FitActivitiesFunction(ClientContext &context, TableFunctionInput &data_p, DataChunk &output) {

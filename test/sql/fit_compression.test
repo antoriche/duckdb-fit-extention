@@ -1,0 +1,100 @@
+# name: test/sql/fit_compression.test
+# description: Compressed FIT files are decompressed by DuckDB's filesystem before decoding
+# group: [sql]
+
+require fit
+
+# Baseline: the uncompressed sample. All assertions below are compared against this.
+query I
+SELECT COUNT(*) FROM fit_records('sample.fit');
+----
+7923
+
+# --- Auto-detection from the file extension ---
+
+query I
+SELECT COUNT(*) FROM fit_records('test/data/sample.fit.gz');
+----
+7923
+
+# The gzip read must return the exact same rows as the uncompressed read. Both
+# directions of EXCEPT ALL are checked, which makes this multiset equality rather than
+# subset containment. The file_source column is excluded because it records the input
+# path verbatim, which differs between the two spellings.
+query I
+SELECT COUNT(*) FROM (
+    (SELECT * EXCLUDE (file_source) FROM fit_records('test/data/sample.fit.gz')
+     EXCEPT ALL
+     SELECT * EXCLUDE (file_source) FROM fit_records('sample.fit'))
+    UNION ALL
+    (SELECT * EXCLUDE (file_source) FROM fit_records('sample.fit')
+     EXCEPT ALL
+     SELECT * EXCLUDE (file_source) FROM fit_records('test/data/sample.fit.gz'))
+);
+----
+0
+
+# --- Explicit compression overrides ---
+
+query I
+SELECT COUNT(*) FROM fit_records('test/data/sample.fit.gz', compression => 'gzip');
+----
+7923
+
+query I
+SELECT COUNT(*) FROM fit_records('test/data/sample.fit.gz', compression => 'auto');
+----
+7923
+
+# Suppressing detection hands the raw deflate stream to the FIT decoder, which rejects it.
+# The expected text pins the failure to the decoder, so a missing fixture or a misparsed
+# parameter cannot pass this assertion by erroring for some other reason.
+statement error
+SELECT COUNT(*) FROM fit_records('test/data/sample.fit.gz', compression => 'none');
+----
+File header signature mismatch
+
+# An uncompressed file reads the same under every spelling that resolves to no compression.
+query I
+SELECT COUNT(*) FROM fit_records('sample.fit', compression => 'auto');
+----
+7923
+
+query I
+SELECT COUNT(*) FROM fit_records('sample.fit', compression => 'none');
+----
+7923
+
+# The parameter is parsed in bind, so an unknown value surfaces DuckDB's own message.
+statement error
+SELECT COUNT(*) FROM fit_records('sample.fit', compression => 'bogus');
+----
+Unrecognized file compression type
+
+# --- Globbing ---
+
+# A glob resolves the suffix per matched file, so detection still applies.
+query I
+SELECT COUNT(*) FROM fit_records('test/data/sample.fit.g*');
+----
+7923
+
+# --- The named parameter is accepted by every table function ---
+
+statement ok
+SELECT * FROM fit_activities('test/data/sample.fit.gz', compression => 'gzip');
+
+statement ok
+SELECT * FROM fit_sessions('test/data/sample.fit.gz', compression => 'gzip');
+
+statement ok
+SELECT * FROM fit_laps('test/data/sample.fit.gz', compression => 'gzip');
+
+statement ok
+SELECT * FROM fit_devices('test/data/sample.fit.gz', compression => 'gzip');
+
+statement ok
+SELECT * FROM fit_events('test/data/sample.fit.gz', compression => 'gzip');
+
+statement ok
+SELECT * FROM fit_users('test/data/sample.fit.gz', compression => 'gzip');

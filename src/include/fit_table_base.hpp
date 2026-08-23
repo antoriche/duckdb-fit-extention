@@ -1,6 +1,7 @@
 #pragma once
 
 #include "duckdb.hpp"
+#include "duckdb/common/enums/file_compression_type.hpp"
 #include "duckdb/function/table_function.hpp"
 #include "fit_types.hpp"
 #include <vector>
@@ -19,12 +20,17 @@ struct FitTableFunctionData : public TableFunctionData {
 	std::vector<FitUser> fit_users;
 	string user_timezone;
 	string table_type; // To distinguish which table this data is for
+	FileCompressionType compression;
 
-	FitTableFunctionData(string name, string type = "records", ClientContext *context = nullptr);
+	FitTableFunctionData(string name, string type = "records", ClientContext *context = nullptr,
+	                     FileCompressionType compression = FileCompressionType::AUTO_DETECT);
 
 private:
 	ClientContext *context;
 	void LoadFitFile();
 };
+
+// Reads the optional `compression` named parameter shared by every FIT table function.
+FileCompressionType FitCompressionParameter(TableFunctionBindInput &input);
 
 } // namespace duckdb

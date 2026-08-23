@@ -30,7 +30,7 @@ unique_ptr<FunctionData> FitSessionsBind(ClientContext &context, TableFunctionBi
 		return_types.push_back(col.second);
 	}
 
-	return make_uniq<FitTableFunctionData>(file_path, "sessions", &context);
+	return make_uniq<FitTableFunctionData>(file_path, "sessions", &context, FitCompressionParameter(input));
 }
 
 void FitSessionsFunction(ClientContext &context, TableFunctionInput &data_p, DataChunk &output) {
